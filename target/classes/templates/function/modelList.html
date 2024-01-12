@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit|ie-comp|ie-stand">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<!--[if lt IE 9]>
+	<script type="text/javascript"  th:src="@{/static/lib/html5shiv.js}"></script>
+	<script type="text/javascript" src="lib/respond.min.js"></script>
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" th:href="@{/h-ui/css/H-ui.min.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/H-ui.admin.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/lib/Hui-iconfont/1.0.8/iconfont.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/skin/default/skin.css}" id="skin" />
+	<link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/style.css}" />
+	<!--[if IE 6]>
+	<script type="text/javascript" th:src="@{/lib/DD_belatedPNG_0.0.8a-min.js}" ></script>
+	<script>DD_belatedPNG.fix('*');</script>
+	<![endif]-->
+	<title>图片列表</title>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 铸造装备模型管理模块<span class="c-gray en">&gt;</span> 模型库 <span class="c-gray en">&gt;</span> 模型列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container" style="position: absolute;width: 97%;height: 90%;">
+	<div class="panel panel-default" style="height: 100%">
+		<div class="panel-header">模型列表
+			<a th:href="@{/function/modelManage}"><input class="btn btn-success radius" type="button" style="position: absolute;right: 4%;;margin-top:  -0.3%;" value="新建"/></a>
+		</div>
+		<div class="panel-body">
+			<table class="table table-border table-bordered table-hover table-bg table-sort">
+				<thead>
+					<tr class="text-c">
+						<th >模型名称</th>
+						<th >创建时间</th>
+						<th >模型概览</th>
+						<th >状态</th>
+					</tr>
+				</thead>
+				<tbody >
+
+				   <!--如果列表为空，则返回提示-->
+					<tr class="text-c"  th:if="${modelAndParamList.size()} eq 0">
+						<td colspan="4">当前未添加模型</td>
+					</tr>
+					<tr class="text-c" th:each="modelAndParam:${modelAndParamList}">
+						<td><a style="cursor:pointer" class="text-primary" th:text="${modelAndParam.getProcName()}" th:href="@{'/function/modelView/'+ ${modelAndParam.getId()}}"></a></td>
+						<td th:text="${modelAndParam.getMtime()}">admin@mail.com</td>
+						<td th:text="${modelAndParam.getProcElements()}">admin@mail.com</td>
+						<td>
+							<!--&lt;!&ndash;跳转modelView  实现模型打开&ndash;&gt;-->
+							<a th:href="@{'/function/modelView/'+ ${modelAndParam.getId()}}"><input class="btn btn-primary size-MINI radius" type="button" value="打开"></a>
+							<!--&lt;!&ndash;跳转modelModify 实现模型修改&ndash;&gt;-->
+							<a th:href="@{'/function/modelModify/'+ ${modelAndParam.getId()}}"><input class="btn btn-primary size-MINI radius" type="button" value="修改"></a>
+							<!--&lt;!&ndash;请求后台modelDelete/{id} 实现模型删除&ndash;&gt;-->
+							<a th:href="@{'/function/modelDelete/'+ ${modelAndParam.getId()}}"><input class="btn btn-primary size-MINI radius" type="button" value="删除"></a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div id="modal-demo" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<!-- 弹出对话框 -->
+		<div class="modal-dialog">
+			<div class="modal-content radius">
+				<div class="modal-header">
+					<h3 class="modal-title">模型删除</h3>
+					<a class="close" data-dismiss="modal" aria-hidden="true">×</a>
+				</div>
+				<div class="modal-body">
+					<strong>确定要删除该模型吗？</strong>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-primary" data-dismiss="modal" onclick="">确定</button>
+					<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" th:src="@{/lib/jquery/1.9.1/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{/lib/layer/2.4/layer.js}"></script>
+<script type="text/javascript" th:src="@{/h-ui/js/H-ui.min.js}"></script>
+<script type="text/javascript" th:src="@{/h-ui.admin/js/H-ui.admin.js}"></script>
+<!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" th:src="@{lib/My97DatePicker/4.8/WdatePicker.js}"></script>
+<script type="text/javascript" th:src="@{lib/datatables/1.10.0/jquery.dataTables.min.js}"></script>
+<script type="text/javascript" th:src="@{lib/laypage/1.2/laypage.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+
+</script>
+</body>
+</html>

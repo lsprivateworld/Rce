@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>服役周期性能退化计算</title>
+    <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css" />
+    <!--<link rel="stylesheet" th:href="@{/css/degeneration.css}" type="text/css"/>-->
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui/css/H-ui.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/H-ui.admin.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/Hui-iconfont/1.0.8/iconfont.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/skin/default/skin.css}" id="skin" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/style.css}" />
+    <script type="text/javascript" th:src="@{/lib/jquery.js}" ></script>
+    <script type="text/javascript" th:src="@{/lib/echarts/echarts.min.js}"></script>
+    <!--_footer 作为公共模版分离出去-->
+    <script type="text/javascript" th:src="@{/lib/jquery/1.9.1/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/lib/layer/2.4/layer.js}"></script>
+    <script type="text/javascript" th:src="@{/h-ui/js/H-ui.min.js}"></script>
+    <script type="text/javascript" th:src="@{/h-ui.admin/js/H-ui.admin.js}"></script>
+    <!--/_footer 作为公共模版分离出去-->
+
+    <!--请在下方写此页面业务相关的脚本-->
+    <script type="text/javascript" th:src="@{lib/My97DatePicker/4.8/WdatePicker.js}"></script>
+    <script type="text/javascript" th:src="@{lib/datatables/1.10.0/jquery.dataTables.min.js}"></script>
+    <script type="text/javascript" th:src="@{lib/laypage/1.2/laypage.js}"></script>
+    <style type="text/css">
+
+        #tab{
+            width:100%;border:0px solid #CCC;
+            margin-top: 0%;
+          /*  height: 85vh;*/
+            margin-left: 0%;}
+        #tab .active{background-color:#FFF}
+        #tab h3{
+            margin:0px;
+            padding:0px;
+            font-size:16px;
+            float:left;
+            background-color:#CCC;
+            width:50%;
+            height:30px;
+            line-height:24px;
+            text-align:center;
+        }
+        #tab div{
+            clear:both;
+            height:100px;
+            font-size:14px;
+            padding:20px 0px 0px 20px;
+            display:none;
+        }
+    </style>
+    <script>
+        window.onload=function(){
+            var oTab=document.getElementById("tab");
+            var aH3=oTab.getElementsByTagName("h3");
+            var aDiv=oTab.getElementsByTagName("div");
+            for(var i=0;i<aH3.length;i++){
+                aH3[i].index=i;
+                aH3[i].onclick=function(){
+                    for(var i=0;i<aH3.length;i++){
+                        aH3[i].className="";
+                        aDiv[i].style.display="none";
+                    }
+                    this.className="active";
+                    aDiv[this.index].style.display="block";
+                }
+            }
+        }
+
+    </script>
+    <!--<script>-->
+        <!--function showText(){-->
+            <!--document.getElementById('detail_text').innerHTML = "";-->
+            <!--document.getElementById("detail_text").innerHTML="说明：输出为装备在不同的时间分别处于正常状态、轻度劣化状态、重度劣化状态和失效状态的概率值； 可靠度曲线表示在t时刻装备处于非失效状态的概率，随着运行时间的增加，装备的可靠性逐渐降低。";-->
+        <!--}-->
+    <!--</script>-->
+
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i>性能参数退化等级分析 <span class="c-gray en">&gt;</span>无模砂型加工中心<span class="c-gray en"></span> <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<!--<div class="page-container" style="position: absolute;width: 97%;height: 90vh;">-->
+<!--    &lt;!&ndash;卡片式布局，外侧div引入class="page-container"以及上方5个公共div&#45;&#45;模型计算区域&ndash;&gt;-->
+<!--    <div class="panel panel-default" style="width: 67%;height: 55vh;float: left;margin-left: 0%;overflow-x:hidden;overflow-y:auto">-->
+<!--        <div class="panel-header" >模型计算</div>&lt;!&ndash;onclick="jumpDialog()"&ndash;&gt;-->
+<!--        <div class="panel-body" id="model_content"></div>-->
+
+<!--        &lt;!&ndash;绘图区域&ndash;&gt;-->
+<!--        <div style="width: 99.7%;height: 48vh;margin-top: -28px;" id="pane2">-->
+
+<!--        </div>-->
+
+
+
+<!--    </div>-->
+
+<!--    &lt;!&ndash;模型说明及日志区域&ndash;&gt;-->
+<!--    <div class="panel panel-default" style="width: 67%;height: 31vh;float: left;margin-left: 0%;margin-top: 2%;">-->
+<!--        <div class="panel-header" >说明</div>-->
+<!--        <div class="panel-body" id="detail_text" style="float: left; width: 30%;height: 80%;overflow-x:hidden;overflow-y:auto;">说明：输出为装备在不同的时间分别处于正常状态、轻度劣化状态、重度劣化状态和失效状态的概率值； 可靠度曲线表示在t时刻装备处于非失效状态的概率，随着运行时间的增加，装备的可靠性逐渐降低。</div>-->
+<!--    </div>-->
+<!--    &lt;!&ndash;参数设置区域&ndash;&gt;-->
+<!--    <div class="panel panel-default" style="position: absolute;width: 30%;height: 90vh; float: left; right: 1%;">-->
+<!--        <div class="panel-header" >参数设置</div>-->
+
+<!--        <div class="panel-body" id="param_form_area">-->
+<!--            <div id="tab">-->
+<!--                <h3 class="active" >隐马尔科夫模型</h3>-->
+<!--                &lt;!&ndash;<h3 style="font-size: 20px">堆栈式自编码器</h3>&ndash;&gt;-->
+<!--               &lt;!&ndash; <h3>Three</h3>&ndash;&gt;-->
+<!--                <div style="display:block" class="tabdiv">-->
+<!--                    <p style="margin-left: -3%;    margin-top: -4%;"><strong>性能参数矩阵:</strong></p>-->
+<!--                    <input class="train1"  id="train_1" name="train" type="checkbox"  style=" width: 6%;height: 20px;margin-left: 1%;" value=""/><span >定位精度</span>-->
+<!--                    <input class="rotate" id="rotate_1" name="train" type="checkbox"style=" width: 6%;height: 20px;margin-left: 1%;"value=""/><span >装备电路</span>-->
+<!--                    </br>-->
+<!--                    <input class="jin" id="jin_1" name="train" type="checkbox"  style=" width: 6%;height: 20px;margin-left: 1%;"value=""/><span >装备温度</span>-->
+<!--                    <input class="wendu" id="wendu_1" name="train" type="checkbox"style=" width: 6%;height: 20px;margin-left: 1%;" value=""/><span  >装备压力</span>-->
+<!--                    <p class="model" style="margin-left: -3%;   margin-top: 3%;"><strong>性能参数表:</strong></p>-->
+<!--                    <textarea name="" cols="" rows="" class="textarea"  style="height:60px;margin-left: -3%;" placeholder="请输入参数">15</textarea>-->
+<!--                    <br/>-->
+<!--                    <p style="margin-left: -3%;"><strong>n:性能退化参数个数:</strong></p>-->
+<!--                    <textarea name="" cols="" rows="" class="textarea"   style="height:60px;margin-left: -3%"  placeholder="请输入参数">3</textarea>-->
+<!--                    <br/>-->
+<!--                    <p  style="margin-left: -3%;"><strong>每个参数的最大失效阈值:</strong></p>-->
+<!--                    <textarea name="" cols="" rows="" class="textarea"  style="height:60px;margin-left: -3%"  placeholder="请输入参数">152</textarea>-->
+<!--                    <br/>-->
+<!--                    <p style="margin-left: -3%;"><strong>输出：当前时刻的可靠度:</strong></p>-->
+<!--                    <textarea name="" cols="" rows="" class="textarea" style="height:60px;margin-left: -3%"   placeholder="请输入参数">0.95</textarea>-->
+<!--                    <input class="btn btn-primary radius" type="button" style="    margin-top: 5%; margin-left: 82%;width: 15%;" value="运行" onclick="system1()" />-->
+<!--                    &lt;!&ndash;<input class="btn btn-primary radius" type="button" style="    margin-top: 5%; margin-left: 82%;width: 15%;" value="清除数据" onclick="system2()" />&ndash;&gt;-->
+<!--                </div>-->
+<!--                &lt;!&ndash;<div class="tabdiv">&ndash;&gt;-->
+<!--                    &lt;!&ndash;<p style="margin-left: -3%;font-size: 20px"><strong>选取表格：</strong></p>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<input class="train1" name="train" type="checkbox"  style=" width: 6%;height: 25px;margin-left: 1%;" value=""/><span style="font-size: 20px">定位精度</span>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<input class="rotate" name="train" type="checkbox"style=" width: 6%;height: 25px;margin-left: 1%;" value=""/><span style="font-size: 20px">装备电路</span>&ndash;&gt;-->
+<!--                    &lt;!&ndash;</br>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<input class="jin"  name="train" type="checkbox"  style=" width: 6%;height: 25px;margin-left: 1%;" value=""/><span style="font-size: 20px">装备温度</span>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<input class="wendu"  name="train" type="checkbox"  style=" width: 6%;height: 25px;margin-left: 1%;"value=""/><span style="font-size: 20px" >装备压力</span>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<p id="model" style="margin-left: -3%;font-size: 20px ; margin-top: 3%;"><strong>模型参数：</strong></p>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<textarea name="" cols="" rows="" class="textarea"  style="height:60px;margin-left: -3%;" placeholder="请输入参数"></textarea>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<br/>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<p style="margin-left: -3%;font-size: 20px"><strong>网络层数：</strong></p>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<textarea name="" cols="" rows="" class="textarea"   style="height:60px;margin-left: -3%"  placeholder="请输入参数"></textarea>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<br/>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<p  style="margin-left: -3%;font-size: 20px"><strong>层神经数:</strong></p>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<textarea name="" cols="" rows="" class="textarea"  style="height:60px;margin-left: -3%"  placeholder="请输入参数"></textarea>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<br/>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<p style="margin-left: -3%;font-size: 20px"><strong>学习率:</strong></p>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<textarea name="" cols="" rows="" class="textarea" style="height:60px;margin-left: -3%"   placeholder="请输入参数"></textarea>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<input class="btn btn-primary radius" type="button" style="    margin-top: 5%; margin-left: 82%;width: 15%;" value="运行" onclick="system1();showText2()" />&ndash;&gt;-->
+<!--                &lt;!&ndash;</div>&ndash;&gt;-->
+
+<!--              &lt;!&ndash;  <div class="tabdiv"> 曲线生成3</div>&ndash;&gt;-->
+<!--            </div>-->
+
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--<link rel="stylesheet" type="text/css" th:href="@{/layer-v3.1.1/layer/theme/default/layer.css}"/>-->
+<!--<script th:src="@{/layer-v3.1.1/layer/mobile/layer.js}" type="text/javascript"></script>-->
+<!--<script th:src="@{/layer-v3.1.1/layer/layer.js}" type="text/javascript"></script>-->
+<!--<script type="text/javascript">-->
+<!--    // function system2() {-->
+<!--    //     // document.getElementById('pane2').innerHTML = "";-->
+<!--    //     $('#pane2').empty();-->
+<!--    // }-->
+<!--</script>-->
+<!--<script type="text/javascript">-->
+<!--    function system1() {-->
+
+<!--         var status_t = document.getElementById("train_1");-->
+
+<!--        console.log(status_t.checked);-->
+<!--         var status_r = document.getElementById("rotate_1");-->
+<!--        console.log(status_r.checked);-->
+<!--         var status_j = document.getElementById("jin_1");-->
+<!--        console.log(status_j.checked);-->
+<!--         var status_w = document.getElementById("wendu_1");-->
+<!--        console.log(status_w.checked);-->
+
+
+
+
+<!--         if (status_t.checked==true  || status_r.checked==true || status_j.checked==true || status_w.checked==true ) {-->
+
+<!--           document.getElementById('pane2').innerHTML = "";-->
+
+<!--             $('#pane2').html("");-->
+
+<!--             // $('#pane2').empty();-->
+<!--            //加载层-风格4-->
+<!--            layer.msg('加载中', {-->
+<!--                icon: 16,-->
+<!--                shade: 0.01-->
+<!--            });-->
+<!--            setTimeout(function () {-->
+<!--                var myCharts = echarts.init(document.getElementById("pane2"));-->
+<!--                console.log("i");-->
+<!--                option = {-->
+<!--                    tooltip: {-->
+<!--                        trigger: 'axis'-->
+<!--                    },-->
+<!--                    grid: {-->
+<!--                        left: '3%',-->
+<!--                        right: '4%',-->
+<!--                        bottom: '3%',-->
+<!--                        containLabel: true-->
+<!--                    },-->
+<!--                    toolbox: {-->
+<!--                        feature: {-->
+<!--                            saveAsImage: {}-->
+<!--                        }-->
+<!--                    },-->
+<!--                    xAxis: {-->
+<!--                        type: 'category',-->
+<!--                        name: '时间',-->
+<!--                        nameTextStyle: {fontSize: 14},-->
+<!--                        axisLabel: {-->
+<!--                            show: true,    //这行代码控制着坐标轴x轴的文字是否显示-->
+<!--                            textStyle: {-->
+<!--                                color: 'black',   //x轴上的字体颜色-->
+<!--                                fontSize: '12'    // x轴字体大小-->
+<!--                            }-->
+<!--                        },-->
+<!--                        data: ['2', '17', '59', '80', '114', '139', '170',-->
+<!--                            '179', '189', '210', '306', '308', '333', '334',-->
+<!--                            '401', '647', '653', '699', '707', '733', '741',-->
+<!--                            '745', '770', '777', '877', '913', '927', '936',-->
+<!--                            '962', '985']-->
+<!--                    },-->
+<!--                    yAxis: {-->
+<!--                        type: 'value',-->
+<!--                        name: '可靠度',-->
+<!--                        nameTextStyle: {fontSize: 14},-->
+<!--                    },-->
+<!--                    axisLabel: {-->
+<!--                        show: true,    //这行代码控制着坐标轴x轴的文字是否显示-->
+<!--                        textStyle: {-->
+<!--                            color: 'black',   //x轴上的字体颜色-->
+<!--                            fontSize: '12'    // x轴字体大小-->
+<!--                        }-->
+<!--                    },-->
+<!--                    series: [{-->
+<!--                        data: [0.997600481, 0.979786664, 0.931582179, 0.90837672, 0.872025217, 0.846227564, 0.815295867,-->
+<!--                            0.80652933, 0.796899244, 0.777048701, 0.69241654, 0.690755074, 0.670320046, 0.66951534,-->
+<!--                            0.61774367, 0.459701838, 0.456400583, 0.431866123, 0.427735935, 0.414583664, 0.410618758,-->
+<!--                            0.408650548, 0.39656119, 0.393240721, 0.34873134, 0.333972476, 0.328403083, 0.324871901,-->
+<!--                            0.314882554, 0.306302169],-->
+<!--                        type: 'line',-->
+<!--                        smooth: true-->
+<!--                    }]-->
+<!--                };-->
+<!--                myCharts.setOption(option);-->
+<!--            }, 3200)-->
+<!--         }else{-->
+<!--             alert('请选择参数矩阵');-->
+<!--         }-->
+<!--    }-->
+
+<!--</script>-->
+
+<!--</body>-->
+<!--</html>-->
+<div class="page-container" style="position: absolute;width: 97%;height: 90vh;">
+    <!--卡片式布局，外侧div引入class="page-container"以及上方5个公共div--模型计算区域-->
+    <div class="panel panel-default" style="width: 67%;height: 55vh;float: left;margin-left: 0%;overflow-x:hidden;overflow-y:auto">
+        <div class="panel-header">模型计算</div>
+        <div class="panel-body" id="model_content"style="height: 80%;overflow: visible">
+
+        </div>
+    </div>
+    <!--模型说明及日志区域-->
+    <div class="panel panel-default" style="width: 67%;height: 31vh;float: left;margin-left: 0%;margin-top: 2%;">
+        <div class="panel-header">说明</div>
+        <div class="panel-body" id="detail_text" style="font-size: 22px;float: left; width: 97%;height: 73%;overflow-x:hidden;overflow-y:auto;"></div>
+    </div>
+
+    <!--参数设置区域-->
+    <div class="panel panel-default" style="position: absolute;width: 30%;height: 90vh; float: left; right: 1%;">
+        <div class="panel-header">参数设置</div>
+        <div class="panel-body" id="param_form_area" >
+
+            <div id="network_2">
+                <span id="network" style="font-size: 14px">初始概率矩阵：</span>
+                <input id="network_1" type="text"  value="10*10" disabled="true"/>
+            </div>
+
+<!--            <div id="study_2" style="visibility: hidden">-->
+<!--                <span id="study">学习率：</span>-->
+<!--                <input id="study_1" type="text" value="0.6" disabled="true"/>-->
+<!--            </div>-->
+
+            <div id="batch_2" style="margin-top:11vh">
+                <span id="batch" >状态转移矩阵：</span>
+                <input id="batch_1" type="text" value="100" disabled="true" style="margin-left: 1.2%"/>
+            </div>
+<!--            <div id="epoch_2" style="visibility: hidden ">-->
+<!--                <span id="epoch" >epoch：</span>-->
+<!--                <input id="epoch_1" type="text" value="10" disabled="true"/>-->
+<!--            </div>-->
+            <div id="function_2" style="margin-left: 5vh;margin-top: 21vh;">
+                <span id="function" >观测矩阵：</span>
+                <input id="function_1" type="text" value="0" disabled="true"/>
+            </div>
+
+
+
+
+
+            <div id="train">
+                <span >请选择模型:</span><br/><br/>
+                <div class="select-box" style="margin-left: -1%;width: 85%">
+                    <select class="select" size="1" name="demo1" id="selectModel">
+                        <option value="">请选择模型...</option>
+                        <option th:each="algorithmList:${algorithmList}"  th:value="${algorithmList.algorithmname}" th:text="${algorithmList.algorithmname}" >请选择数据源</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <div id="test" style="margin-top: 60vh">
+                <span>请选择数据源:</span><br/><br/>
+                <div class="select-box" style="margin-left: -1%;width: 83%;">
+                    <select class="select" size="1" name="demo2" id="selectSource">>
+                        <option value="">分析矩阵数据一</option>
+                        <option th:each="fileAndUploadper:${fileAndUploadperList1}"  th:value="${fileAndUploadper.fileName}" th:text="${fileAndUploadper.fileName}" >请选择数据源</option>
+                    </select>
+<!--                    <div style="border: 0px solid red;width: 100%;height: 10px" ></div>-->
+<!--                    <select class="select" size="1" name="demo2" id="selectSourcex">>-->
+<!--                        <option value="">分析矩阵数据二</option>-->
+<!--                        <option th:each="fileAndUploadper:${fileAndUploadList}"  th:value="${fileAndUploadper.fileName}" th:text="${fileAndUploadper.fileName}" >请选择数据源</option>-->
+<!--                    </select>-->
+                </div>
+
+
+                <div style="border: 0px solid red;width: 100%;height: 10px" ></div>
+
+                <div class="select-box" style="margin-left: -1%;width: 83%;">
+                    <select class="select" size="1" name="demo2" id="selectSourcex">>
+                        <option value="">分析矩阵数据二</option>
+                        <option th:each="fileAndUploadper:${fileAndUploadperList1}"  th:value="${fileAndUploadper.fileName}" th:text="${fileAndUploadper.fileName}" >请选择数据源</option>
+                    </select>
+
+                </div>
+
+
+
+            </div>
+            <input class="btn btn-primary radius" type="button"  value="运行" style=" margin-top: 75vh;
+                   margin-left: 77%;z-index: 100;position: absolute" onclick="showLine()"/>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" th:src="@{/echarts.js}"></script>
+<script type="text/javascript">
+
+
+    function showLine(){
+
+
+        //加载层-风格4
+        // layer.msg('运行中', {
+        //     icon: 16,
+        //     shade: 0.01,
+        //     time:0
+        // });
+
+        var  myselect=document.getElementById("selectModel");
+        var index=myselect.selectedIndex;
+        var  modelVals = myselect.options[index].value;
+
+
+        var  myselect=document.getElementById("selectSource");
+        var index=myselect.selectedIndex;
+        var  dataVals = myselect.options[index].value;
+
+
+        var  myselect=document.getElementById("selectSourcex");
+        var index=myselect.selectedIndex;
+        var  dataValsx = myselect.options[index].value;
+
+
+        if (modelVals==""){
+            $.Huimodalalert('请选择模型', 1000);
+        }else if(dataVals ==""){
+            $.Huimodalalert('请选择数据源一', 1000);
+        }else if(dataValsx ==""){
+            $.Huimodalalert('请选择数据源二', 1000);
+        } else{
+            document.getElementById('detail_text').innerHTML = "";
+            document.getElementById("detail_text").append("数据已输入");
+            document.getElementById("detail_text").appendChild(document.createElement("br"));
+
+
+            var experimentname ={
+                "dataVals":dataVals,
+                "dataValsx":dataValsx,
+                "modelVals":modelVals,
+            };
+
+
+            $.ajax({
+                async: true,
+                type: "post",
+                dataType: "json",
+                contentType: 'application/json;charset=UTF-8',
+                data:JSON.stringify(experimentname),
+                url: '/perform/analyseRun4',
+                success: function (data) {
+
+                    // alert(data);
+                    // console.log(data);
+
+                    var len=data.length;
+
+                    var array=new Array();
+                    for (var i=0;i<len;i++){
+                        array[i]=i;
+                    }
+
+
+
+                    // 基于准备好的dom，初始化echarts实例
+                    var myChart = echarts.init(document.getElementById('model_content'));
+                    // 指定图表的配置项和数据
+                    var option = {
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        toolbox: {
+                            feature: {
+                                saveAsImage: {}
+                            }
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: array,
+                            name: '时刻'
+
+                        },
+                        yAxis: {
+                            type: 'value',
+                            name: '可靠度'
+                        },
+
+                        series: [{
+                            data:data,
+                            type: 'line',
+                            symbol: 'none',
+                            smooth: true
+                        }]
+                    };
+                    // 使用刚指定的配置项和数据显示图表。
+                    myChart.setOption(option);
+                },
+                error:function (){
+                    $.Huimodalalert('任务运行失败', 1000);
+                }
+            });
+
+            $.Huimodalalert('计算完成',1000);
+
+
+        }
+
+
+       // }
+    }
+</script>
+</body>
+</html>

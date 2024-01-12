@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xd.rce.mapper.function.FileSearchMapper">
+    <select id="fileSerach" resultType="fileAndUploadFun" parameterType="java.lang.String">
+        SELECT * FROM fileanduploadfun;
+    </select>
+    <select id="selectAllfillByid" resultType="com.xd.rce.domain.function.FileAndUploadFun" parameterType="java.lang.Integer">
+        SELECT * FROM fileanduploadfun where id=#{id}
+    </select>
+
+    <delete id="fileDeleteByid"  parameterType="java.lang.Integer">
+        DELETE FROM fileanduploadfun where id=#{id}
+    </delete>
+
+    <select id="findByfilenameLike" resultType="com.xd.rce.domain.function.FileAndUploadFun" parameterType="java.lang.String">
+        SELECT * FROM fileanduploadfun WHERE filename LIKE #{res}
+    </select>
+</mapper>

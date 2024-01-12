@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xd.rce.mapper.function.FileUploadFunMapper">
+    <insert id="uploadFileFun" parameterType="fileAndUploadFun" useGeneratedKeys="true" keyProperty="id">
+        insert into fileanduploadfun values (null,#{fileGroup},#{fileKind},#{fileName},#{filePath},#{fileSize},#{fileTime},#{fileText});
+    </insert>
+</mapper>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xd.rce.mapper.perform.FileUploadperMapper">
+    <insert id="uploadFileper" parameterType="fileAndUploadper" useGeneratedKeys="true" keyProperty="id">
+        insert into fileanduploadper values (null,#{fileGroup},#{fileKind},#{fileName},#{filePath},#{fileSize},#{fileTime});
+    </insert>
+
+    <select id="findAllFile" resultType="com.xd.rce.domain.perform.FileAndUploadper" >
+        select * FROM fileanduploadper
+    </select>
+
+    <select id="selectAllfillByid" resultType="com.xd.rce.domain.perform.FileAndUploadper" parameterType="java.lang.Integer">
+        SELECT * FROM fileanduploadper where id=#{id}
+    </select>
+
+    <select id="selectfillByname" resultType="com.xd.rce.domain.perform.FileAndUploadper" parameterType="java.lang.String">
+        SELECT * FROM fileanduploadper where file_name=#{file_name}
+    </select>
+
+
+
+
+    <select id="selectalgorithmname" resultType="com.xd.rce.domain.perform.Algorithmper" parameterType="java.lang.String">
+        SELECT * FROM algorithmper where algorithmname=#{algorithmname}
+    </select>
+
+    <select id="selectalgorithByid" resultType="com.xd.rce.domain.perform.Algorithmper" parameterType="java.lang.Integer">
+        SELECT * FROM algorithmper where algorithmid=#{algorithmid}
+    </select>
+
+
+    <select id="selectDataDealByid" resultType="com.xd.rce.domain.perform.Algorithmper">
+        SELECT * FROM algorithmper
+    </select>
+
+    <delete id="deletFileByid" parameterType="java.lang.Integer">
+        DELETE FROM fileanduploadper WHERE id = #{id}
+    </delete>
+
+    <insert id="saveAlgorithm" parameterType="com.xd.rce.domain.perform.Algorithmper">
+    INSERT INTO algorithmper(algorithmname,algorithmtype,algorithmdescribe,algorithmlabel,algorithmtime,algorithmversion,algorithmparamsinput,algorithmparamscontent,algorithmparamsoutput,algorithmpath,algorithmman,algorithmmiaoshu)
+    VALUES(#{algorithmname},#{algorithmtype},#{algorithmdescribe},#{algorithmlabel},#{algorithmtime},#{algorithmversion},#{algorithmparamsinput},#{algorithmparamscontent},#{algorithmparamsoutput},#{algorithmpath},#{algorithmman},#{algorithmmiaoshu})
+    </insert>
+
+    <delete id="deleteAlgorithm" parameterType="java.lang.Integer">
+        DELETE FROM algorithmper WHERE algorithmid = #{algorithmid}
+    </delete>
+
+
+    <insert id="insertAnalyseModel" parameterType="String">
+      INSERT analyse_model_process (modelname,modelprocess) VALUES (#{modelname},#{modelprocess})
+    </insert>
+
+
+    <select id="selectAllModel" resultType="com.xd.rce.domain.perform.AnalyseModelProcess">
+        SELECT * FROM analyse_model_process
+    </select>
+
+
+
+    <delete id="deleteModelByid" parameterType="java.lang.Integer">
+        DELETE FROM analyse_model_process WHERE id = #{id}
+    </delete>
+
+
+    <select id="selectAllModelByid" resultType="com.xd.rce.domain.perform.AnalyseModelProcess" parameterType="java.lang.Integer">
+        SELECT * FROM analyse_model_process WHERE id = #{id}
+    </select>
+
+
+    <select id="moHuDataSource" parameterType="String" resultType="com.xd.rce.domain.perform.FileAndUploadper">
+     SELECT * FROM fileanduploadper WHERE file_name LIKE '%${file_name}%'
+    </select>
+
+
+    <select id="algorithmSearchSource" parameterType="String" resultType="com.xd.rce.domain.perform.Algorithmper">
+     SELECT * FROM algorithmper WHERE algorithmname LIKE '%${algorithmname}%'
+    </select>
+
+
+
+</mapper>

@@ -1,0 +1,320 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit|ie-comp|ie-stand">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<!--[if lt IE 9]>
+	<script type="text/javascript"  th:src="@{/static/lib/html5shiv.js}"></script>
+	<script type="text/javascript" src="lib/respond.min.js"></script>
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" th:href="@{/h-ui/css/H-ui.min.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/H-ui.admin.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/lib/Hui-iconfont/1.0.8/iconfont.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/skin/default/skin.css}" id="skin" />
+	<link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/style.css}" />
+	<!--[if IE 6]>
+	<script type="text/javascript" th:src="@{/lib/DD_belatedPNG_0.0.8a-min.js}" ></script>
+	<script>DD_belatedPNG.fix('*');</script>
+	<![endif]-->
+	<title>图片列表</title>
+</head>
+<body>
+<input  type="hidden" th:value="xx" id="experimentidx"/>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i>性能参数采集与预处理<span class="c-gray en">&gt;</span> 性能参数预处理 <span class="c-gray en"></span><a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container" style="position: absolute;width: 97%;height: 90%;">
+	<div class="panel panel-default" style="width: 30%;height: 43vh;float: left;">
+		<div class="panel-header">算法源</div>
+		<div class="panel-body">
+			<input class="btn btn-success radius" type="button" style="margin-left: 2%;margin-top: 2%;" value="开始" onclick="add(this.value)"/>
+
+			<input th:each="algorithmpers:${algorithmList}" class="btn btn-success radius" type="button" style="float:left;margin-left: 2%;margin-top: 2%;" th:id="${algorithmpers.algorithmid}" th:value="${algorithmpers.algorithmname}"
+				   onclick="add(this.value,this.id)"/>
+			<input class="btn btn-success radius" type="button" style="margin-left: 2%;margin-top: 2%;" value="结束" onclick="add(this.value)"/>
+
+		</div>
+	</div>
+	<div class="panel panel-default" style="width: 67%;height: 43vh;float: left;margin-left: 2%;overflow-x:hidden;overflow-y:auto">
+
+		<div class="panel-header">建模<input class="btn btn-primary radius" type="button" style="position: absolute;margin-top: -0.3%;right: 9%;"  value="运行" onclick="runExperiment()"/></div>
+		<a th:href="@{/perform/dataManageper}"><input class="btn btn-success radius" type="button" style="position: absolute;right: 4%;margin-top:  -2.1%;" value="返回"/></a>
+		<div class="panel-body" id="model_content"></div>
+
+	</div>
+	<div class="panel panel-default" style="width: 30%;height: 43vh;float: left;margin-top: 2%;">
+		<div class="panel-header">数据配置</div>
+		<div class="panel-body" id="param_form_area">
+			<div class="param_form_group" id="param1_formxx">
+				<select id="selectbusinessModel" class="select huselect1" size="1"  name="selectbusinessModel" style="color: black;">
+					<option value="选择" >请选择合适的数据</option>
+					<option th:each="filelist:${fileAndUploadperList}" th:value="${filelist.id}" th:text="${filelist.fileName}" ></option>
+				</select>
+
+				<input type="hidden"  placeholder="请输入模型名字" class="input-text radius size-S" style="margin:10px 15px 10px 27px;;width: 43%; "id="savemodelname" name="programmename">
+
+			</div>
+		</div>
+	</div>
+	<div class="panel panel-default" style="width: 67%;height: 43vh;float: left;margin-left: 2%;margin-top: 2%;">
+		<div class="panel-header">详情介绍</div>
+		<div>
+			<br>铸造产线数据预处理-数据标准化</br>
+			<br>dataPath：铸造产线原始数据路径</br>
+			<br>savepath：铸造产线标准化数据保存路径</br>
+		</div>
+<!--		<div class="panel-body" id="detail_text" style="float: left; width: 30%;height: 80%;overflow-x:hidden;overflow-y:auto;">介绍内容</div>-->
+<!--		<div class="panel-body" style="float: left;width: 63.6%;height:80%;overflow-x:hidden;overflow-y:auto;border-left: 1px solid #ddd;">-->
+<!--			<strong><p>参数详情</p></strong>-->
+<!--			<div id="param_text"></div>-->
+<!--		</div>-->
+	</div>
+	<div id="modal-demo" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<!-- 弹出对话框 -->
+		<div class="modal-dialog">
+			<div class="modal-content radius">
+				<div class="modal-header">
+					<h3 class="modal-title">数据名称</h3>
+					<a class="close" data-dismiss="modal" aria-hidden="true">×</a>
+				</div>
+				<div class="modal-body">
+					<strong>名称：</strong><input type="text" placeholder="请输入模型名称" class="input-text radius size-S" style="margin:10px 15px 10px 15px;;width: 43%;" id="saveName">
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-primary" data-dismiss="modal" onclick="save();">确定</button>
+					<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div id="showRun" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<!-- 弹出对话框 -->
+	<div class="modal-dialog"  style="width: 20%;height: 90%">
+		<div class="modal-content radius" >
+			<div style="font-size: 19px;"><img style="margin-left: 6%;" th:src="@{/temp/running.gif}"/>正在运行，请稍后</div>
+		</div>
+	</div>
+</div>
+
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" th:src="@{/lib/jquery/1.9.1/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{/lib/layer/2.4/layer.js}"></script>
+<script type="text/javascript" th:src="@{/h-ui/js/H-ui.min.js}"></script>
+<script type="text/javascript" th:src="@{/h-ui.admin/js/H-ui.admin.js}"></script>
+<!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" th:src="@{lib/My97DatePicker/4.8/WdatePicker.js}"></script>
+<script type="text/javascript" th:src="@{lib/datatables/1.10.0/jquery.dataTables.min.js}"></script>
+<script type="text/javascript" th:src="@{lib/laypage/1.2/laypage.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+	/*<![CDATA[*/
+
+	function runExperiment() {
+
+			if(confirm("确定要运行？")){
+				var algorithmname = getModelAndData();
+				var algorithmnameArr = algorithmname.split(';');
+                var namex = algorithmnameArr[1];
+				var idx =$("#experimentidx").val();
+
+
+				var  myselect=document.getElementById("selectbusinessModel");
+				var index=myselect.selectedIndex;
+				var  id = myselect.options[index].value;
+
+
+				var experimentname ={
+					"id":id,
+					"namex":namex,
+					"idx":idx,
+				};
+
+				$.ajax({
+					cache: false,
+					async: true,
+					type: "post",
+					dataType: "json",
+					contentType: 'application/json;charset=UTF-8',
+					data: JSON.stringify(experimentname),
+					url: '/perform/experimentRun',
+					beforeSend:function () {//注册成功之前，显示该关于加载的动图
+						$("#showRun").modal("show");
+					},
+					success: function (data) {
+						$("#showRun").modal("hide");
+
+							$.Huimodalalert("运行成功", 1000);
+							window.setTimeout("window.location = '/perform/dataManageper'",1500);
+							// var  configflow =[[${configflow}]];
+							// var algorithmname = configflow.split(";")[1];
+							// if (algorithmname=="ZzzsCorrelation2") {
+							// 	window.setTimeout("window.location = '/experiment/affectFactorsModel'",1500);
+							// }
+							//
+							// if (algorithmname=="GdPCAandKmeans") {
+							// 	window.setTimeout("window.location = '/experiment/affectFactorsModel2'",1500);
+							// }
+							// if (algorithmname=="Rate_Prediction2") {
+							// 	window.setTimeout("window.location = '/experiment/affectFactorsModel3'",1500);
+							// }
+							// if (algorithmname=="thresholdYanzheng") {
+							// 	window.setTimeout("window.location = '/experiment/affectFactorsModel4'",1500);
+							// }
+							// if (algorithmname=="guanlianYanzheng") {
+							// 	window.setTimeout("window.location = '/experiment/affectFactorsModel5'",1500);
+							// }
+
+
+
+							// document.getElementById("showData").innerText = data.data;
+
+							/*     $("#modal-demo").modal("show");*/
+							// Echarts图
+							/*             var  configflow =[[${configflow}]];
+                                        var algorithmname = configflow.split(";")[1];
+                                           showEcharts(algorithmname,data.datas);
+
+                                           $.Huimodalalert("成功返回结果", 1000);*/
+
+						/*    else {
+                                $.Huimodalalert(data.resp_msg, 5000);
+
+                            }*/
+					},
+					/*       error:function (){
+                               $.Huimodalalert(data.resp_msg, 5000);
+                           }*/
+				});
+			}
+
+	}
+
+	// function save() {
+	// 	if (document.getElementById('saveName').value == "") {
+	// 		$.Huimodalalert('请输入结果名称', 2000);
+	// 	} else {
+	// 		var flowchart = name;
+	// 		var dataarearesult = document.getElementById('saveName').value;
+	// 		var dataCsvid = document.getElementById('savemodelname').value;
+	//
+	// 		var result = {
+	// 			"flowchart": flowchart,
+	// 			"dataarearesult": dataarearesult,
+	// 			"dataCsvid": dataCsvid
+	// 		}
+	//
+	// 		$.ajax({
+	// 			url: "/secondSom",
+	// 			type: "POST",
+	// 			async: true,
+	// 			contentType: "application/json; charset=utf-8",
+	// 			data: JSON.stringify(result),
+	// 			dataType: 'json',
+	// 			success: function (data) {
+	// 				// $.Huimodalalert('保存成功,请返回数据区', 1000);
+	// 			}
+	// 		});
+	// 	}
+	// }
+
+	//跳出模型保存框
+    function jumpDialog() {
+        $("#modal-demo").modal("show");
+    }
+
+    //获取模型数据，保存除模型名称以外的其他数据
+	function getModelAndData() {
+
+		//保存流程图
+		var flowchart = "";
+		$("#model_content input[type='button']").each(function () {
+
+			var v = $(this).val();
+			flowchart = flowchart + v + ";";
+		});
+		flowchart = flowchart.substr(0, flowchart.length - 1);
+		return flowchart;
+
+	}
+
+
+
+    //初始化删除按钮
+    function init() {
+        $(".algorithm_elements").mouseenter(function () {
+            $(this).find(".delete").show();
+
+        });
+
+        $(".algorithm_elements").mouseleave(function () {
+            $(this).find(".delete").hide();
+        });
+
+        //执行删除操作
+        $('.delete').click(function(){
+            $(this).parent().parent().remove();
+        })
+    }
+
+
+    //统计开始和结束个数，保证建模逻辑
+    function countStart(){
+        var inputs_start = $("#model_content input[value='开始']");
+        return inputs_start.length;
+    }
+    function countStop(){
+        var inputs_stop = $("#model_content input[value='结束']");
+        return inputs_stop.length;
+    }
+
+
+    //添加算法图标及信息,逻辑判断信息
+    function add(value,id){
+		$("#experimentidx").attr("value",id);
+        var num_start = countStart();
+        var num_stop = countStop();
+        if(num_start == 0 && value != '开始'){
+            $.Huimodalalert('请先添加【开始】',2000);
+        }
+        else if(num_start >0 && value == '开始'){
+            $.Huimodalalert('单个模型只能添一个【开始】',2000);
+        }
+        else if(num_stop >0){
+            $.Huimodalalert('【结束】后不能再添加元素',2000);
+        }
+        else{
+
+            if(value != '结束'){
+                $("#model_content").append("<div style = 'margin-right: 2%;margin-top: 10%;float:left' class = 'algorithm_elements'><input class='btn btn-success radius' type='button' value='"
+                    + value
+                    +"' onclick='relation_detail(this.value);switchParam_form(value);'/>"+"<a href='#'><img src='/temp/button-cross.png' class='delete' style='width: 20px;height: 20px;display: none;'/></a>"+"<i class='Hui-iconfont' style='padding-left: 20px;'>&#xe67a;</i></div>");
+                init();
+                name = value;
+            }
+            else{
+                $("#model_content").append("<div style = 'margin-right: 2%;margin-top: 10%;float:left' class = 'algorithm_elements'><input class='btn btn-success radius' type='button' value='"
+                    + value
+                    +"' onclick='relation_detail(this.value);switchParam_form(value);'/>"+"<a href='#'><img src='/temp/button-cross.png' class='delete' style='width: 20px;height: 20px;display: none;'/></a>"+"</div>");
+                init();
+            }
+        }
+    }
+
+</script>
+
+
+<!--<script type="text/javascript" th:inline="javascript">-->
+<!--	var name;-->
+<!--	function selectQues1() {-->
+<!--		var businessid = $("#selectbusinessModel").val();-->
+<!--		document.getElementById("savemodelname").value= businessid;-->
+<!--	}-->
+<!--</script>-->
+</body>
+</html>

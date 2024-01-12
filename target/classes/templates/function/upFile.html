@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" xmlns:c="http://www.w3.org/1999/XSL/Transform">
+<head>
+    <meta http-equiv="Content-Type" content="multipart/form-data; charset=utf-8" />
+    <title>数据格式转换与数据分组模块</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/upFile.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui/css/H-ui.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/H-ui.admin.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/Hui-iconfont/1.0.8/iconfont.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/skin/default/skin.css}" id="skin" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/style.css}" />
+    <link rel="stylesheet" th:href="@{css/style.css}" type="text/css"/>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 故障数据采集与记录 <span class="c-gray en">&gt;</span> 读取数据源  <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+    <div class="panel panel-default" style="height: 90vh;">
+        <div class="panel-header">数据源采集</div>
+
+        <div class="panel-body">
+
+            <div class="logo_area">
+                <div class="logo_content">
+                    <img class="logo_image" th:src="@{/image/Excel.bmp}"/>
+                    <p class="logo_text" ><strong>Excel</strong></p>
+                </div>
+                <div class="logo_content">
+                    <img class="logo_image" th:src="@{/image/Oracle.bmp}"/>
+                    <p class="logo_text" ><strong>Oracle</strong></p>
+                </div>
+                <div class="logo_content">
+                    <img class="logo_image" th:src="@{/image/Hive.bmp}"/>
+                    <p class="logo_text" ><strong>Hive</strong></p>
+                </div>
+                <div class="logo_content">
+                    <img class="logo_image" th:src="@{/image/MySol.bmp}"/>
+                    <p class="logo_text" ><strong>MySqL</strong></p>
+                </div>
+                <div class="logo_content">
+                    <img class="logo_image" th:src="@{/image/kafka1.bmp}"/>
+                    <p class="logo_text" ><strong>TSDB</strong></p>
+                </div>
+            </div>
+            <div class="logo2">配置数据源</div>
+            <!--上传表单区域-->
+            <div class="upfile-group">
+                <!--通过onsubmit 去进行提交前其他操作-->
+                <form id="upfileForm" name="upfileForm" action="#" th:action="@{/saveFile}" enctype="multipart/form-data" method="post"  onsubmit="return verify()">
+                    <div class="fileupload">
+                        <span id="filename">点击此处选择文件</span>
+                        <input type="file"  id="file" onchange="getFilename();" name="filename"/>
+                    </div><br>
+
+                    <p>只支持csv数据格式文件上传</p>
+                    <div class="select-box" style="width: 80%;display: none">
+                        <select id="fileKind" class="select" size="1"  name="fileKind" style="display: none">
+                            <option value=".csv" selected>.csv</option>
+                        </select>
+                    </div>
+                    <p><strong>数据类型：</strong></p>
+                    <div class="select-box" style="width: 73%">
+                        <select id="fileGroup" class="select" size="1"  name="fileGroup">
+                            <option value="" selected>...</option>
+                            <option value="无模砂型加工(FTA)">无模砂型加工(FTA)</option>
+                            <option value="无模砂型加工(MTBF)">无模砂型加工(MTBF)</option>
+                            <option value="数字化低压铸造装备(FTA)">数字化低压铸造装备(FTA)</option>
+                            <option value="数字化低压铸造装备(MTBF)">数字化低压铸造装备(MTBF)</option>
+                            <option value="数字化真空差压铸造装备(FTA)">数字化真空差压铸造装备(FTA)</option>
+                            <option value="数字化真空差压铸造装备(MTBF)">数字化真空差压铸造装备(MTBF)</option>
+                        </select>
+                    </div></br></br>
+
+                    <div class="input_text" style=" margin-left: -11%;">
+                        <span id="batch"  style="margin-left: 10%"> <strong>请填写必要的文件说明：</strong></span></br></br>
+                        <input id="fileText" class="input-text radius size-S" type="text" placeholder="输入说明内容" style="height: 30px;margin-left: 10%;width: 65%;" name="fileText">
+                    </div>
+                    <div class="button_position">
+                        <input type="submit" class="btn btn-primary radius" value="提交" onclick="check()">
+                    </div>
+                </form><br/>
+
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+
+<script type="text/javascript" th:src="@{/lib/jquery/1.9.1/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{/lib/layer/2.4/layer.js}"></script>
+<script type="text/javascript" th:src="@{/h-ui/js/H-ui.min.js}"></script>
+<script type="text/javascript" th:src="@{/h-ui.admin/js/H-ui.admin.js}"></script>
+</body>
+
+<script>
+
+
+</script>
+<script>
+
+
+
+    //获取文件名，显示在上传文本框
+    function getFilename(){
+        var filename=document.getElementById("file").value;
+        if(filename==undefined||filename==""){
+            document.getElementById("filename").innerHTML="点击此处上传文件";
+        } else{
+            var fn=filename.substring(filename.lastIndexOf("\\")+1);
+            document.getElementById("filename").innerHTML=fn; //将截取后的文件名填充到span中
+        }
+
+
+    }
+
+    //跳出模型保存框
+    function jumpDialog() {
+        $("#modal-demo").modal("show");
+    }
+
+    //关闭模型保存框
+    function hideDialog() {
+        setTimeout($("#modal-demo").modal("hide"),"3000");
+    }
+
+    //form表单提交前进行判断，return false意味着不再跳转
+    function verify() {
+        var file_str = $("#file").val();
+
+        var file_arr = file_str.split('.');
+        var file = "."+file_arr[file_arr.length-1];
+        var fileKind = $("#fileKind").val();
+
+        if (file =="."|| file==null) {
+            $.Huimodalalert('请选择要上传的数据文件',1000);
+            return false;
+        }
+        // if(file != ".csv"&&file != ".xls" &&file != ".txt"&&file != ".png"&&file != ".pdf"){
+        //     $.Huimodalalert('该文件类型不支持上传',1000);
+        //     return false;
+        // }
+        if(file != ".csv"){
+            $.Huimodalalert('该文件类型不支持上传',1000);
+            return false;
+        }
+        // if(file != fileKind){
+        //     $.Huimodalalert('文件上传类型与目标格式不一致，即将进行数据转换并上传',1000);
+        //     jumpDialog();
+        //     processerbar(3000);
+        //     setTimeout(" saveReport()","3500");
+        // }
+        if(file == fileKind){
+            $.Huimodalalert('正在上传',1000);
+            //执行提交
+            setTimeout(" saveReport()","3500");
+        }
+        return false;
+
+    }
+
+
+    function saveReport() {
+// jquery .ajaxSubmit表单提交，页面不刷新
+        $("#upfileForm").ajaxSubmit(function(message) {
+// 对于表单提交成功后处理，message为提交页面saveReport.htm的返回内容
+
+            $.Huimodalalert('上传成功',2000);
+            //关闭弹框
+            hideDialog();
+            //延时后页面跳转
+            window.setTimeout("window.location = '/function/dataManage'",1000);
+        });
+        return false; // 必须返回false，否则表单会自己再做一次提交操作，并且页面跳转
+    }
+
+    //进度条，animate函数，进度条动画
+    function processerbar(time){
+        $("#probar").animate({width:"100%"},time,"swing");
+
+    };
+
+</script>
+</html>

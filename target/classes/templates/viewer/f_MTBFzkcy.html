@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>数字化无磨砂型加工中心健康状态评估计算模块</title>
+    <!-- <link rel="stylesheet" th:href="@{css/style.css}" type="text/css"/>-->
+    <!-- <script type="text/javascript" src="js/echarts.min.js"></script>-->
+    <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui/css/H-ui.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/H-ui.admin.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/Hui-iconfont/1.0.8/iconfont.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/skin/default/skin.css}" id="skin" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/style.css}" />
+
+    <!--_footer 作为公共模版分离出去-->
+    <script type="text/javascript" th:src="@{/lib/jquery/1.9.1/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/lib/layer/2.4/layer.js}"></script>
+    <script type="text/javascript" th:src="@{/h-ui/js/H-ui.min.js}"></script>
+    <script type="text/javascript" th:src="@{/h-ui.admin/js/H-ui.admin.js}"></script>
+    <!--/_footer 作为公共模版分离出去-->
+
+    <!--请在下方写此页面业务相关的脚本-->
+    <script type="text/javascript" th:src="@{lib/My97DatePicker/4.8/WdatePicker.js}"></script>
+    <script type="text/javascript" th:src="@{lib/datatables/1.10.0/jquery.dataTables.min.js}"></script>
+    <script type="text/javascript" th:src="@{lib/laypage/1.2/laypage.js}"></script>
+
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i>铸造装备MTBF分析可视化 <span class="c-gray en">&gt;</span> 数字化真空差压铸造装备可视化  <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container" style="position: absolute;width: 97%;height: 90vh;">
+    <!--卡片式布局，外侧div引入class="page-container"以及上方5个公共div--模型计算区域-->
+    <div class="panel panel-default" style="width: 67%;height: 72vh;float: left;margin-left: 0%;overflow-x:hidden;overflow-y:hidden">
+        <div class="panel-header">模型计算</div>
+        <div class="panel-body" style="overflow-y: auto;height: 85%;">
+            <div class="panel-body" id="model_content_Beat"style="height: 40%;overflow: visible">
+
+            </div>
+            <div class="panel-body" id="model_content_Eta"style="height: 40%;overflow: visible">
+
+            </div>
+
+            <div class="panel-body" id="model_content_etaz"style="height: 50%;overflow: visible">
+                <div class="panel-body" id="model_content_eta1"style="height: 80%;margin-left: 4%;width:45%;overflow: visible">
+
+                </div>
+                <div class="panel-body" id="model_content_eta2"style="height: 80%; width:45%;margin-top: -25%;margin-left:50%;overflow: visible">
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!--模型说明及日志区域-->
+    <div class="panel panel-default" style="width: 100%;height: 15vh;float: left;margin-left: 0%;margin-top: 25px;">
+        <div class="panel-header">说明</div>
+        <div class="panel-body" id="detail_text" style="float: left; width: 97%;height: 73%;overflow-x:hidden;overflow-y:auto;font-size: 14px;">
+            结果描述：可靠性MTBF计算是基于Bayes理论进行计算，该方法以某一参数为随机变量，通过构造似然函数和验前分布函数，利用贝叶斯公式推导得到后验分布函数的形式，再利用可靠性试验得到失效数据作为样本，估计概率分布函数中的相关参数，最后得到各项可靠性指标。
+            具体到故障分析中，选取功能性故障数据作为先验信息，参数性故障数据作为后验数据。运用Bootstrap方法获得经验先验分布，依靠故障间隔时间观测值构造Weibull分布的似然函数，Weibull分布中的参数 、 服从均匀分布；随后将先验信息和似然函数代入贝叶斯后验分布公式进行参数估计，以 、 的均值作为估计值，由此可得到设备故障间隔时间的二参Weibull分布，对此分布进行点估计和区间估计即可获得MTBF的估计值。
+        </div>
+    </div>
+
+    <!--参数设置区域-->
+    <div class="panel panel-default" style="position: absolute;width: 30%;height: 72vh; float: left; right: 1%;">
+        <div class="panel-header">输出结果</div>
+        <div class="panel-body" id="param_form_area" >
+            <div style="margin-top: 5vh;margin-left: 12%;">
+                <span ><strong>MTBF:</strong> </span><br/>
+                <input type="text" readonly unselectable="on" id="resultMTBF" style="margin-top: 0vh;width: 85%;height: 4.5vh;"><br/><br/>
+                <span ><strong>Ebeta:</strong> </span><br/>
+                <input type="text" readonly unselectable="on" id="resultEbeta" style="margin-top: 0vh;width: 85%;height: 4.5vh;"><br/><br/>
+                <span ><strong>Eta</strong> </span><br/>
+                <input type="text" readonly unselectable="on" id="resultEta" style="margin-top: 0vh;width: 85%;height: 4.5vh;"><br/>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" th:src="@{/echarts.js}"></script>
+<script type="text/javascript">
+
+
+    var data=[[${result}]];
+    var newData=data.slice(9206,18410);
+    var xAxisData=newData.slice(3,3003);
+    var yAxisData1=newData.slice(3004,6004);
+    var yAxisData2=newData.slice(6005,9005);
+    var xAxisData21=newData .slice(9006,9055);
+    var xAxisData22=newData .slice(9056,9105);
+    var yAxisData21=newData.slice(9106,9155);
+    var yAxisData22=newData.slice(9154,9203);
+
+
+    // 基于准备好的dom，初始化echarts实例,绘制第一个图
+    var myChart = echarts.init(document.getElementById('model_content_Beat'));
+    // 指定图表的配置项和数据
+    var option1 = {
+        title:{
+            text:'Beta迭代收敛过程'
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        toolbox: {
+            feature: {
+                dataView: {readOnly: false},
+                saveAsImage: {}
+            }
+        },
+        xAxis: {
+            type: 'category',
+            data: xAxisData
+
+        },
+        yAxis: {
+            name: 'Beta',
+            type: 'value'
+        },
+
+        series: [{
+            data:yAxisData1,
+            type: 'line',
+            symbol: 'none',
+            smooth: false,
+            itemStyle: {
+                color: '#5F99DC'
+            },
+        }]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option1);
+    // 基于准备好的dom，初始化echarts实例,绘制第二个图
+    var myChart = echarts.init(document.getElementById('model_content_Eta'));
+    // 指定图表的配置项和数据
+    var option2 = {
+        title:{
+            text:'Eta迭代收敛过程'
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        toolbox: {
+            feature: {
+                dataView: {readOnly: false},
+                saveAsImage: {}
+            }
+        },
+        xAxis: {
+            type: 'category',
+            data: xAxisData
+
+        },
+        yAxis: {
+            name: 'Eta',
+            type: 'value'
+        },
+
+        series: [{
+            data:yAxisData2,
+            type: 'line',
+            symbol: 'none',
+            smooth: false,
+            itemStyle: {
+                color: '#5F99DC'
+            },
+        }]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option2);
+
+    // 基于准备好的dom，初始化echarts实例,绘制第三个图
+    var myChart = echarts.init(document.getElementById('model_content_eta1'));
+    // 指定图表的配置项和数据
+    var option3 = {
+        title:{
+            text:'Beta后验密度函数'
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        toolbox: {
+            feature: {
+                saveAsImage: {}
+            }
+        },
+        xAxis: {
+            type: 'category',
+            data: []
+
+        },
+        yAxis: {
+            name: '密度',
+            type: 'value'
+        },
+
+        series: [{
+            data:yAxisData21,
+            type: 'line',
+            symbol: 'none',
+            smooth: false,
+            itemStyle: {
+                color: '#5F99DC'
+            },
+            areaStyle: {
+                color: '#5F99DC'
+            },
+        }]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option3);
+
+    // 基于准备好的dom，初始化echarts实例,绘制第四个图
+    var myChart = echarts.init(document.getElementById('model_content_eta2'));
+    // 指定图表的配置项和数据
+    var option4 = {
+        title:{
+            text:'Eta后验密度函数'
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        toolbox: {
+            feature: {
+                saveAsImage: {}
+            }
+        },
+        xAxis: {
+
+            type: 'category',
+            data:[]
+
+        },
+        yAxis: {
+            name: '密度',
+            type: 'value'
+        },
+
+        series: [{
+            data:yAxisData22,
+            type: 'line',
+            symbol: 'none',
+            smooth: false,
+            itemStyle: {
+                color: '#5F99DC'
+            },
+            areaStyle: {
+                color: '#5F99DC'
+            },
+        }]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option4);
+    //取出结果数据
+    var resultMTBF = document.getElementById("resultMTBF");
+    resultMTBF.value = newData[0];
+    var resultEbeta = document.getElementById("resultEbeta");
+    resultEbeta.value = newData[1];
+    var resultEta = document.getElementById("resultEta");
+    resultEta.value = newData[2];
+</script>
+</body>
+</html>

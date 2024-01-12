@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xd.rce.mapper.function.ModelMapper">
+
+    <insert id="saveModel" parameterType="com.xd.rce.domain.function.ModelAndParam">
+        insert into modelandparam(modelGroup,param1form,param2form,param3form,param4form,procelements,procname,mtime) values (#{modelGroup},#{param1form},#{param2form},#{param3form},#{param4form},#{procElements},#{procName},#{mtime});
+    </insert>
+    <select id="showModelList" resultType="com.xd.rce.domain.function.ModelAndParam">
+        select * from modelandparam
+    </select>
+    <delete id="modelDeleteById" parameterType="Integer">
+        delete from modelandparam where id=#{id}
+    </delete>
+    <select id="openModelById" parameterType="Integer" resultType="com.xd.rce.domain.function.ModelAndParam">
+        select * from modelandparam where id=#{id}
+    </select>
+    <select id="modifyModelById" parameterType="Integer" resultType="com.xd.rce.domain.function.ModelAndParam">
+        select * from modelandparam where id=#{id}
+    </select>
+    <update id="updateModel" parameterType="com.xd.rce.domain.function.ModelAndParam" >
+        update modelandparam set param1form = #{param1form},param2form= #{param2form},param3form=#{param3form},param4form=#{param4form},procelements=#{procElements},procname=#{procName},mtime=#{mtime} where id = #{id};
+    </update>
+</mapper>

@@ -1,0 +1,125 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.springframework.org/schema/data/jaxb">
+	<head>
+		<meta charset="utf-8">
+		<meta name="renderer" content="webkit|ie-comp|ie-stand">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<link rel="Bookmark" th:href="@{/favicon.ico}"/>
+		<link rel="Shortcut Icon" th:href="@{/favicon.ico}" />
+		<!--[if lt IE 9]>
+<script type="text/javascript" th:src="@{/lib/html5shiv.js}"></script>
+<script type="text/javascript" th:src="@{/lib/respond.min.js}"></script>
+<![endif]-->
+		<link type="text/css" rel="stylesheet" th:href="@{/h-ui/css/H-ui.min.css}" />
+		<link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/H-ui.admin.css}" />
+		<link rel="stylesheet" type="text/css" th:href="@{/lib/Hui-iconfont/1.0.8/iconfont.css}" />
+		<link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/skin/default/skin.css}" id="skin" />
+		<link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/style.css}" />
+		<!--[if IE 6]>
+<script type="text/javascript" th:src="@{/lib/DD_belatedPNG_0.0.8a-min.js}" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+
+
+	</head>
+	<body style="background-image: url(/image/meau.jpg);background-size: 220%">
+
+<header class="navbar-wrapper">
+
+			<div class="navbar navbar-fixed-top " style="height: 60px;background-color: rgba(0,0,0,0);">
+				<div class="container-fluid cl" style="height: 60px;background-color:rgba(0,0,0,0);">
+					<a th:href="@{/home}">
+				<img th:src="@{/image/xd1.png}" style="width: 12%;height: 90%;"/>
+
+				<span style="color: white;font-weight: bold;font-size: 1.5rem;margin-left:2%;margin-top: 0.5%;position: absolute;">铸造装备功能可靠性分析系统</span>
+					</a>
+				</div>
+			</div>
+		</header>
+		<aside class="Hui-aside" style="background-color: rgba(0,0,0,0);">
+			<div class="menu_dropdown bk_2">
+				<dl id="menu-article">
+					<dt title="该模块用于无模砂型加工中心、数字化低压铸造和数字化真空差压铸造&#10三类铸造装备使用过程中故障模式、故障原因、解决方案、故障时间、&#10故障修复时间等多种数据的采集和记录"><i class="Hui-iconfont">&#xe616;</i> 故障数据采集与记录<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+					<dd>
+						<ul>
+							<li title="该模块用于三类装备的故障数据采集"><a data-href="upFile" data-title="读取数据源" href="javascript:void(0)">读取数据源</a></li>
+							<li title="该模块用于三类装备的故障数据的管理"><a data-href="dataManage" data-title="数据采集表" href="javascript:void(0)">数据采集表</a></li>
+
+						</ul>
+					</dd>
+				</dl>
+				<!--<dl id="menu-tongji">-->
+					<!--<dt title="该模块用于无模砂型加工中心、数字化低压铸造和数字化&#10真空差压铸造三类铸造装备模型的创建与管理"><i class="Hui-iconfont">&#xe61a;</i>铸造装备模型管理模块<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>-->
+					<!--<dd>-->
+						<!--<ul>-->
+							<!--<li title="该模块用于三类装备模型的创建"><a data-href="modelManage" data-title="铸造装备建模">铸造装备建模</a></li>-->
+							<!--<li title="该模块用于三类装备模型的管理"><a data-href="modelList" data-title="模型库" href="javascript:void(0)">模型库</a></li>-->
+						<!--</ul>-->
+					<!--</dd>-->
+				<!--</dl>-->
+				<dl id="menu-1">
+					<dt title="该模块用于故障树分析，通过故障演绎分析方法，评价复杂系统的可靠性的重要方法，&#10其中包括顶事件的确定、故障树的建立、所有底事件失效概率的确定"><i class="Hui-iconfont">&#xe613;</i> 铸造装备故障树分析模块<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+					<dd>
+						<ul>
+							<li title="该模块用于无模砂型加工中心的故障树分析"><a data-href="wmsx" data-title="无模砂型加工中心">无模砂型加工中心</a></li>
+							<li title="该模块用于数字化低压铸造装备的故障树分析"><a data-href="dyzz" data-title="数字化低压铸造装备" href="javascript:void(0)">数字化低压铸造装备</a></li>
+							<li title="该模块用于数字化真空差压铸造装备的故障树分析"><a data-href="zkcy" data-title="数字化真空差压铸造装备" href="javascript:void(0)">数字化真空差压铸造装备</a></li>
+						</ul>
+					</dd>
+				</dl>
+				<dl id="menu-2">
+					<dt title="该模块用于铸造装备的MTBF分析，其中分析过程包括&#10故障数据统计、前验信息收集分析、装备MTBF计算"><i class="Hui-iconfont">&#xe613;</i> 铸造装备MTBF分析模块<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+					<dd>
+						<ul>
+							<li title="该模块用于无模砂型加工中心MTBF分析"><a data-href="MTFBwmsx" data-title="无模砂型加工中心">无模砂型加工中心</a></li>
+							<li title="该模块用于数字化低压铸造装备MTBF分析"><a data-href="MTFBdyzz" data-title="数字化低压铸造装备" href="javascript:void(0)">数字化低压铸造装备</a></li>
+							<li title="该模块用于数字化真空差压铸造装备MTBF分析"><a data-href="MTFBzkcy" data-title="数字化真空差压铸造装备" href="javascript:void(0)">数字化真空差压铸造装备</a></li>
+						</ul>
+					</dd>
+				</dl>
+
+			</div>
+		</aside>
+		<div class="dislpayArrow hidden-xs"><a class="pngfix" href="javascript:void(0);" onClick="displaynavbar(this)"></a></div>
+		<section class="Hui-article-box">
+			<div id="Hui-tabNav" class="Hui-tabNav hidden-xs">
+				<div class="Hui-tabNav-wp">
+					<ul id="min_title_list" class="acrossTab cl">
+						<li class="active">
+							<span title="我的桌面" data-href="welcome">首页</span>
+							<em></em></li>
+					</ul>
+				</div>
+				<div class="Hui-tabNav-more btn-group"><a id="js-tabNav-prev" class="btn radius btn-default size-S" href="javascript:;"><i
+						 class="Hui-iconfont">&#xe6d4;</i></a><a id="js-tabNav-next" class="btn radius btn-default size-S" href="javascript:;"><i
+						 class="Hui-iconfont">&#xe6d7;</i></a></div>
+			</div>
+			<div id="iframe_box" class="Hui-article">
+				<div class="show_iframe">
+					<div style="display:none" class="loading"></div>
+					<iframe scrolling="yes" frameborder="0" th:src="@{/welcome}"></iframe>
+				</div>
+			</div>
+		</section>
+
+
+		<div class="contextMenu" id="Huiadminmenu">
+			<ul>
+				<li id="closethis">关闭当前 </li>
+				<li id="closeall">关闭全部 </li>
+			</ul>
+		</div>
+		<!--_footer 作为公共模版分离出去-->
+		<script type="text/javascript" th:src="@{/lib/jquery/1.9.1/jquery.min.js}"></script>
+		<script type="text/javascript" th:src="@{/lib/layer/2.4/layer.js}"></script>
+		<script type="text/javascript" th:src="@{/h-ui/js/H-ui.min.js}"></script>
+		<script type="text/javascript" th:src="@{/h-ui.admin/js/H-ui.admin.js}"></script>
+		<!--/_footer 作为公共模版分离出去-->
+
+		<!--请在下方写此页面业务相关的脚本-->
+		<script type="text/javascript" th:src="@{/lib/jquery.contextmenu/jquery.contextmenu.r2.js}"></script>
+
+	</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>可靠性模块</title>
+    <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css" />
+    <!--<link rel="stylesheet" th:href="@{/css/degeneration.css}" type="text/css"/>-->
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui/css/H-ui.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/H-ui.admin.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/Hui-iconfont/1.0.8/iconfont.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/skin/default/skin.css}" id="skin" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/style.css}" />
+    <script type="text/javascript" th:src="@{/lib/jquery.js}" ></script>
+    <script type="text/javascript" th:src="@{/lib/echarts/echarts.min.js}"></script>
+    <!--_footer 作为公共模版分离出去-->
+    <script type="text/javascript" th:src="@{/lib/jquery/1.9.1/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/lib/layer/2.4/layer.js}"></script>
+    <script type="text/javascript" th:src="@{/h-ui/js/H-ui.min.js}"></script>
+    <script type="text/javascript" th:src="@{/h-ui.admin/js/H-ui.admin.js}"></script>
+    <!--/_footer 作为公共模版分离出去-->
+
+    <!--请在下方写此页面业务相关的脚本-->
+    <script type="text/javascript" th:src="@{lib/My97DatePicker/4.8/WdatePicker.js}"></script>
+    <script type="text/javascript" th:src="@{lib/datatables/1.10.0/jquery.dataTables.min.js}"></script>
+    <script type="text/javascript" th:src="@{lib/laypage/1.2/laypage.js}"></script>
+    <style type="text/css">
+
+        #tab{
+            width:100%;border:0px solid #CCC;
+            margin-top: 0%;
+            /*  height: 85vh;*/
+            margin-left: 0%;}
+        #tab .active{background-color:#FFF}
+        #tab h3{
+            margin:0px;
+            padding:0px;
+            font-size:16px;
+            float:left;
+            background-color:#CCC;
+            width:50%;
+            height:30px;
+            line-height:24px;
+            text-align:center;
+        }
+        #tab div{
+            clear:both;
+            height:100px;
+            font-size:14px;
+            padding:20px 0px 0px 20px;
+            display:none;
+        }
+    </style>
+
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i>隐马尔科夫性能退化分析可视化 <span class="c-gray en">&gt;</span>无模砂型加工中心可视化<span class="c-gray en"></span> <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+
+
+<div class="page-container" style="position: absolute;width: 97%;height: 90vh;">
+    <!--卡片式布局，外侧div引入class="page-container"以及上方5个公共div--模型计算区域-->
+    <div class="panel panel-default" style="width: 100%;height: 55vh;float: left;margin-left: 0%;overflow-x:hidden;overflow-y:auto">
+        <div class="panel-header">可视化展示</div>
+        <div class="panel-body" id="model_content"style="height: 80%;overflow: visible">
+
+        </div>
+    </div>
+    <!--模型说明及日志区域-->
+    <div class="panel panel-default" style="width: 100%;height: 31vh;float: left;margin-left: 0%;margin-top: 2%;">
+        <div class="panel-header">可视化说明</div>
+        <div class="panel-body" id="detail_text" style="float: left; width: 97%;height: 73%;overflow-x:hidden;overflow-y:auto;font-size: 22px;">
+            由初始状态概率和一步转移概率矩阵求得任意时刻t的状态概率，将初始状态概率π和一步转移概率矩阵A代入预测模型，可知各个时刻的状态概率，通过可靠度计算公式可得可靠度变化曲线
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" th:src="@{/echarts.js}"></script>
+<script type="text/javascript">
+
+    var result = [[${result}]];
+
+    console.log(result)
+
+    var len=result.length;
+    //
+    var array=new Array();
+    for (var i=0;i<len;i++){
+        array[i]=i;
+    }
+
+
+
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('model_content'));
+    // 指定图表的配置项和数据
+    var option = {
+        tooltip: {
+            trigger: 'axis'
+        },
+        toolbox: {
+            feature: {
+                saveAsImage: {}
+            }
+        },
+        xAxis: {
+            type: 'category',
+            data: array,
+            name: '时刻'
+
+        },
+        yAxis: {
+            type: 'value',
+            name: '可靠度'
+        },
+
+        series: [{
+            data:result,
+            type: 'line',
+            symbol: 'none',
+            smooth: true
+        }]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+</script>
+</body>
+</html>

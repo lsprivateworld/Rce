@@ -1,0 +1,68 @@
+
+.logo_area{
+    border: 0px solid black;
+    height: 25vh;
+    width: 80%;
+    margin-left:10%;
+    margin-top: 10%;
+    position: absolute;
+}
+
+.logo_content{
+    float: left;
+    border: 0px solid black;
+    height: 25vh;
+    width: 20%;
+    margin-left:-1%;
+    margin-top: 0%;
+}
+
+.logo_image{
+    width:75px;
+    height: 67px;
+    margin: 0 auto;
+    display: block;
+
+}
+
+.logo_text{
+    text-align: center;
+    margin-top: 10%;
+}
+
+.upfile-group{
+    border: 0px solid black;
+    height: 30vh;
+    width: 30%;
+    margin-left:32%;
+    margin-top: 22%;
+    position: absolute;
+}
+
+.fileupload{
+    position: relative;
+    width: 385px;
+    height: 32px;
+    border: 1px solid #bcbcbc;
+    border-radius: 4px;
+    line-height: 35px;
+    padding-left: 8px;
+    overflow: hidden;
+ }
+
+.fileupload input{
+    position: absolute;
+    width:385px;
+    height:35px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    -ms-filter: 'alpha(opacity=0)';
+}
+
+.button_position{
+    margin-top: 4%;
+    position: absolute;
+    right: 20%;
+}

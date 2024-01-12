@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" charset="UTF-8">
+    <title>new</title>
+
+    <script type="text/javascript"  th:src="@{/static/lib/html5shiv.js}"></script>
+    <script type="text/javascript" src="lib/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui/css/H-ui.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/H-ui.admin.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/Hui-iconfont/1.0.8/iconfont.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/skin/default/skin.css}" id="skin" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/style.css}" />
+
+    <script type="text/javascript" src="/newjsplumb/js/jquery.js"></script>
+    <script type="text/javascript" src="/newjsplumb/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/newjsplumb/css/jquery-ui.min.css" type="text/css">
+    <script type="text/javascript" src="/newjsplumb/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/newjsplumb/js/jquery.jsPlumb.js"></script>
+    <script type="text/javascript" src="/newjsplumb/js/newindex.js"></script>
+
+    <link rel="stylesheet" href="/newjsplumb/css/newf.css" type="text/css">
+    <script type="text/javascript" th:inline="javascript">
+        function save1() {
+
+            var nameOfFlow = prompt("请输入节点细化流程名", "");
+            var connects = [];
+            $.each(jsPlumb.getAllConnections(), function (idx, connection) {
+                connects.push({
+                    ConnectionId: connection.id,
+                    PageSourceId: connection.sourceId,
+                    PageTargetId: connection.targetId,
+                });
+            });
+
+            // alert(connects);
+            var blocks = [];
+            $("#right .node").each(function (idx, elem) {
+                var $elem = $(elem);
+                var arry = $elem.html().split(">");
+                var blockName = arry[1];
+                blocks.push({
+                    BlockId: $elem.attr('id'),
+                    BlockContent: $elem.html(),
+                    BlockName:blockName,
+                    BlockX: parseInt($elem.css("left"), 10),
+                    BlockY: parseInt($elem.css("top"), 10),
+                });
+            });
+
+            var modeid = $("#modeid").val();
+            var id = [[${Id}]];
+// var sceneprocessid = [[${sceneprocessid}]];
+// alert(sceneblock);
+            $.ajax({
+                type: "post",
+                url: "/data/newflowsdl/",
+                data: JSON.stringify({
+                    name: nameOfFlow,
+                    blocks: blocks,
+                    connects: connects,
+                    modeid:modeid,
+                    Id:id
+                }),
+                //dataType: 'json',
+                contentType: "application/json",
+                success: function (data) {
+                    alert(data);
+                }
+            });
+        }
+    </script>
+
+    <script type="text/javascript">
+        function amend1() {
+            jsPlumb.detachEveryConnection();}
+    </script>
+
+</head>
+<body>
+<input type="hidden" th:value="${modeid}" id="modeid"/>
+<nav class="breadcrumb" style="text-align: left"><i class="Hui-iconfont">&#xe67f;</i> 数据链  <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" >
+    <span class="c-gray en"><i class="Hui-iconfont">&#xe68f;</i></span></a>
+    <a id="nextstep" >
+        <input class="btn btn-success radius" type="button" style="position: absolute;right: 6%;;margin-top:  0.2%;" value="数据管理" onclick="RefineNext()"/>
+    </a>
+
+    <script type="text/javascript" th:inline="javascript">
+
+        function RefineNext() {
+            var href="/data/fileManage/"+[[${modeid}]];
+            document.getElementById("nextstep").setAttribute("href",href)
+
+        }
+
+    </script>
+
+</nav>
+<div class="page-container" >
+    <div id="root">
+        <div id="left">
+            <div class="righttop1_topText">流程元素
+            </div>
+            <div class="node" id="node1" style="margin-left: 6vh"><img src="/newjsplumb/images/liucheng1.svg" style="width: 32px;height: 32px" alt="流程1" title="流程1"/>流程1</div>
+            <div class="node node2css" style="margin-left: 6vh" id="node2"><img src="/newjsplumb/images/liucheng2.svg" style="width: 32px;height: 32px" alt="流程2" title="流程2"/>流程2</div>
+            <div class="node node3css" style="margin-left: 6vh" id="node3"><img src="/newjsplumb/images/liucheng3.svg" style="width: 32px;height: 32px" alt="流程3" title="流程3"/>流程3</div>
+            <div class="node node4css" style="margin-left: 6vh" id="node4"><img src="/newjsplumb/images/liucheng4.svg" style="width: 32px;height: 32px" alt="流程4" title="流程4"/>流程4</div>
+            <div class="node node4css" style="margin-left: 6vh" id="node5"><img src="/newjsplumb/images/liucheng5.svg" style="width: 32px;height: 32px" alt="流程4" title="流程4"/>流程4</div>
+            <div class="node node2css" style="margin-left: 6vh" id="node6"><img src="/newjsplumb/images/liucheng6.svg" style="width: 32px;height: 32px" alt="流程2" title="流程2"/>流程2</div>
+            <div class="node node3css" style="margin-left: 6vh" id="node7"><img src="/newjsplumb/images/liucheng7.svg" style="width: 32px;height: 32px" alt="流程3" title="流程3"/>流程3</div>
+            <div class="node node4css" style="margin-left: 6vh" id="node8"><img src="/newjsplumb/images/liucheng8.svg" style="width: 32px;height: 32px" alt="流程4" title="流程4"/>流程4</div>
+            <div class="node node4css" style="margin-left: 6vh" id="node9"><img src="/newjsplumb/images/liucheng9.svg" style="width: 32px;height: 32px" alt="流程4" title="流程4"/>流程4</div>
+        </div>
+        <div id="right">
+            <div class="righttop1">
+                <div id="sceneblock" class="righttop1_topText" style="width: 100%;height: 5vh;text-align: center;line-height: 5vh;font-size: 18px">数据链构建
+                </div>
+                <div class="content" id="main">
+                </div>
+            </div>
+                    <div style="margin-top: 1%;margin-left: -18.7%;width: 119%;">
+                        <table class="table table-border table-bordered table-hover table-bg table-sort">
+                            <thead>
+                            <tr class="text-c">
+                                <th >文件名称</th>
+                                <th >文件大小</th>
+                                <th >创建时间</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <tr class="text-c" th:if="${datamodelSourceList.size()} eq 0">
+                                <td colspan="4">当前未上传数据</td>
+                            </tr>
+
+                            <tr class="text-c" th:each="datamodelSource:${datamodelSourceList}">
+                                <td><a style="cursor:pointer" class="text-primary" th:text="${datamodelSource.sourcename}" th:href="@{'/data/fileReview/'+ ${datamodelSource.sourceid}}"></a></td>
+                                <td th:text="${datamodelSource.sourcesize}"></td>
+                                <td th:text="${datamodelSource.sourcetime}"></td>
+                                <td>
+                                  <!--  <a th:href="@{'/data/fileDelete/'+ ${datamodelSource.sourceid}}">-->
+                                        <input class="btn btn-primary size-MINI radius" type="button" value="删除" onclick="deleteLinkView(this.id)" th:id="${datamodelSource.sourceid}">
+                            <!--        </a>-->
+                                    <a th:href="@{'/data/fileDown/'+ ${datamodelSource.sourceid}}">
+                                        <input class="btn btn-primary size-MINI radius" type="button" value="下载">
+                                    </a>
+
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript" th:inline="javascript">
+    function deleteLinkView(id) {
+        if (confirm("确定删除文件？")) {
+            var sourceid = id;
+            var id = {
+                "sourceid": sourceid
+            };
+            $.ajax({
+                url: "/data/fileDelete",
+                type: "POST",
+                async: true,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(id),
+                dataType: 'json',
+                success: function (data) {
+                    if (data.code==1) {
+                        $.Huimodalalert('删除成功',2000);
+                    }
+                },
+            });
+            window.setTimeout("window.location.reload(true)",1000);
+        }
+        else {
+        }
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" th:inline="javascript">
+    $(document).ready(function () {
+        jsPlumb.detachEveryConnection();
+        jsPlumb.deleteEveryEndpoint();
+        var myblocks = [[${myblocks}]];
+        var myconnects = [[${myconnects}]];
+
+
+
+        for (var i=0; i<myblocks.length; i++){
+            var BlockId = myblocks[i].blockId;
+            var BlockContent = myblocks[i].blockContent;
+            var BlockX = myblocks[i].blockX;
+            var BlockY = myblocks[i].blockY;
+            var htmlText = '<div class="node '+ ' node2css"'+'style="position:absolute;left:' + BlockX + 'px;top:' + BlockY + 'px;" id="' + BlockId + '">' + BlockContent + '</div>';
+            $("#main").append(htmlText);
+        }
+
+        var common = {
+            isSource: true,
+            isTarget: true,
+            fillStyle: "transparent",
+            radius: 2,
+            lineWidth: 2,
+            connector: ["Flowchart", { stub: [40, 60], gap: 10, cornerRadius: 5, alwaysRespectStubs: true }],
+
+            paintStyle :{
+                strokeStyle: "#1e8151",
+                fillStyle: "transparent",
+                radius: 3,
+                lineWidth:6 ,
+            },
+
+
+            connectorStyle:{ lineWidth: 4,
+                strokeStyle: "#61B7CF",
+                joinStyle: "round",
+                outlineColor: "white",
+                outlineWidth: 2,
+            },
+
+            // aaa
+            connectorHoverStyle:{
+                lineWidth: 4,
+                strokeStyle: "green",
+                outlineWidth: 2,
+                outlineColor: "white"
+            },
+
+            connectorOverlays:[ "Arrow"]
+        }
+
+        for (i =0; i<myconnects.length;i++){
+            try{
+                var PageSourceId = myconnects[i].pageSourceId;
+                var PageTargetId = myconnects[i].pageTargetId;
+
+                //用jsPlumb添加锚点
+                jsPlumb.addEndpoint(PageSourceId, {anchors: "TopCenter"}, common);
+                jsPlumb.addEndpoint(PageSourceId, {anchors: "RightMiddle"}, common);
+                jsPlumb.addEndpoint(PageSourceId, {anchors: "BottomCenter"}, common);
+                jsPlumb.addEndpoint(PageSourceId, {anchors: "LeftMiddle"}, common);
+
+                jsPlumb.addEndpoint(PageTargetId, {anchors: "TopCenter"}, common);
+                jsPlumb.addEndpoint(PageTargetId, {anchors: "RightMiddle"}, common);
+                jsPlumb.addEndpoint(PageTargetId, {anchors: "BottomCenter"}, common);
+                jsPlumb.addEndpoint(PageTargetId, {anchors: "LeftMiddle"}, common);
+
+                jsPlumb.draggable(PageSourceId);
+                jsPlumb.draggable(PageTargetId);
+
+
+                $("#" + PageSourceId).draggable({containment: "parent"});//保证拖动不跨界
+                $("#" + PageTargetId).draggable({containment: "parent"});//保证拖动不跨界
+
+
+                jsPlumb.makeSource(PageSourceId, {
+                    endpoint: ["Dot", { radius: 8 }],
+                    anchor: "Continuous",
+                    paintStyle: {
+                        strokeStyle: "#1e8151",
+                        fillStyle: "transparent",
+                        radius: 2,
+                        lineWidth: 2
+                    }
+                });
+
+                jsPlumb.makeTarget(PageTargetId, {
+                    endpoint: ["Dot", { radius: 8 }],
+                    anchor: "Continuous",
+                    paintStyle: {
+                        strokeStyle: "#1e8151",
+                        fillStyle: "transparent",
+                        radius: 2,
+                        lineWidth: 2,
+                        // arrow:{  width: 10, length: 10,location:0.7}
+                    }
+                });
+
+
+                jsPlumb.connect({source:PageSourceId,target:PageTargetId,connector:["Flowchart"],
+                    paintStyle:{
+                        lineWidth: 4,
+                        strokeStyle: "#61B7CF",
+                        joinstyle: "round",
+                        outlineColor: "white",
+                        outlineWidth: 2,
+                    },
+
+                    overlays:[
+                        ["Arrow"],
+                        // ["Label", { label:"", location:0.25, id:"myLabel" }]
+
+                    ]
+                });}
+            catch (e) {
+                continue;
+            }
+        }
+
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>数字化无磨砂型加工中心健康状态评估计算模块</title>
+    <!-- <link rel="stylesheet" th:href="@{css/style.css}" type="text/css"/>-->
+    <!-- <script type="text/javascript" src="js/echarts.min.js"></script>-->
+    <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui/css/H-ui.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/H-ui.admin.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/Hui-iconfont/1.0.8/iconfont.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/skin/default/skin.css}" id="skin" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/style.css}" />
+
+    <!--_footer 作为公共模版分离出去-->
+    <script type="text/javascript" th:src="@{/lib/jquery/1.9.1/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/lib/layer/2.4/layer.js}"></script>
+    <script type="text/javascript" th:src="@{/h-ui/js/H-ui.min.js}"></script>
+    <script type="text/javascript" th:src="@{/h-ui.admin/js/H-ui.admin.js}"></script>
+    <!--/_footer 作为公共模版分离出去-->
+
+    <!--请在下方写此页面业务相关的脚本-->
+    <script type="text/javascript" th:src="@{lib/My97DatePicker/4.8/WdatePicker.js}"></script>
+    <script type="text/javascript" th:src="@{lib/datatables/1.10.0/jquery.dataTables.min.js}"></script>
+    <script type="text/javascript" th:src="@{lib/laypage/1.2/laypage.js}"></script>
+
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i>铸造装备故障树分析模块 <span class="c-gray en">&gt;</span> 数字化低压铸造装备 <span class="c-gray en">&gt;</span> 计算 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container" style="position: absolute;width: 97%;height: 90vh;">
+    <!--卡片式布局，外侧div引入class="page-container"以及上方5个公共div--模型计算区域-->
+    <div class="panel panel-default" style="width: 67%;height: 55vh;float: left;margin-left: 0%;overflow-x:hidden;overflow-y:hidden">
+        <div class="panel-header">模型计算</div>
+        <div class="panel-body" id="model_content"style="height:85%;overflow-x: hidden;overflow-y: auto;">
+            <table class="table table-border table-bordered table-hover" style="height: 99%">
+                <thead id="table_head" class="text-c"></thead>
+                <tbody id="table_body" class="text-c"></tbody>
+            </table>
+        </div>
+    </div>
+    <!--模型说明及日志区域-->
+    <div class="panel panel-default" style="width: 67%;height: 31vh;float: left;margin-left: 0%;margin-top: 2%;">
+
+        <div class="panel-header">说明</div>
+        <div class="panel-body" id="detail_text" style="font-size:17px;float: left; width: 97%;height: 73%;overflow-x:hidden;overflow-y:auto;">
+            功能描述：通过右侧参数栏选取相应的设备数据源，数据源代表的是底事件概率打分结果，然后点击运行，运行结果是R可靠度，并在
+            模型计算区域内显示底事件发生概率，底事件概率重要度，底事件关键重要度。
+        </div>
+    </div>
+
+    <!--参数设置区域-->
+    <div class="panel panel-default" style="position: absolute;width: 30%;height: 90vh; float: left; right: 1%;">
+        <div class="panel-header">参数设置</div>
+        <div class="panel-body" id="param_form_area" >
+            <!--<div id="train" style="margin-top: 6vh">-->
+                <!--<span ><strong>请选择模型:</strong></span><br/><br/>-->
+                <!--<div class="select-box" style="margin-left: -1%;width: 85%">-->
+                    <!--<select class="select" size="1" name="demo1" id="selectModel">-->
+                        <!--<option value="">请选择模型...</option>-->
+                        <!--<option th:each="modelAndParam:${modelAndParamList}"   th:if="${modelAndParam.getModelGroup()=='数字化低压铸造装备(FTA)'}"th:value="${modelAndParam.getProcName()}" th:text="${modelAndParam.getProcName()}" >请选择数据源</option>-->
+                    <!--</select>-->
+                <!--</div>-->
+            <!--</div>-->
+            <div id="test" style="margin-top: 5vh">
+                <span> <strong>请选择数据源:   底事件概率打分结果</strong></span><br/><br/>
+                <div class="select-box" style="margin-left: -1%;width: 83%;">
+
+                    <select class="select" size="1" name="demo2" id="selectSource">>
+                        <option value="" selected>请选择数据源...</option>
+
+                        <option th:each="fileAndUploadFun:${fileAndUploadFunList}" th:if="${fileAndUploadFun.getFileGroup()=='数字化低压铸造装备(FTA)'}" th:value="${fileAndUploadFun.fileName}" th:text="${fileAndUploadFun.fileName}" >请选择数据源</option>
+                    </select>
+                </div>
+            </div>
+            <input class="btn btn-primary radius" type="button"  value="运行" style=" position:absolute;margin-top:21vh;margin-left: 69%; "onclick="showLine();">
+            <div style="margin-top: 40vh;margin-left: 2%;">
+                <span style=""><strong>输出结果: R可靠度</strong></span><br/><br/>
+                <input type="text" readonly unselectable="on" id="result" style="font-size: 15px;margin-top: 0vh;width: 80%;height: 4.5vh;">
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" th:src="@{/echarts.js}"></script>
+<script type="text/javascript">
+
+    function showLine(){
+        // var sm=document.getElementById("selectModel");
+        var ss=document.getElementById("selectSource");
+        var index=ss.selectedIndex;
+        inputFileName=ss.options[index].value;
+        var inputFile={
+            "inputFileName":inputFileName
+        }
+        // if (sm.value==""||ss.value==""){
+        //     $.Huimodalalert('请选择模型和数据源', 1000);
+        // }
+        if (ss.value==""){
+            $.Huimodalalert('请选择数据源', 1000);
+        }else {
+            $.ajax({
+                async: false,
+                type: "post",
+                dataType: "json",
+                data:JSON.stringify(inputFile),
+                contentType: 'application/json;charset=UTF-8',
+                url: '/function/ftaAlgorithm1',
+                success: function (data) {
+                    var sResult = data[1];
+                    var thread_content = document.getElementById("table_head").innerHTML + "";
+                    if (thread_content == "") {
+                        var result = sResult;
+                        var col_count = result.split(",");
+                        var len=col_count.length;
+                        var R = col_count[len-1];
+                        //输出R可靠度的值
+                        var rv = document.getElementById("result");
+                        rv.value = R;
+                        var bL = "底事件发生概率,底事件概率重要度,底事件关键重要度"
+                        var headers = bL.split(",");
+                        row = document.createElement("tr"); //创建行
+                        for (var i = 0; i < 3; i++) {
+                            th1 = document.createElement("th"); //创建单元格
+                            th1.appendChild(document.createTextNode(headers[i])); //为单元格添加内容
+                            row.appendChild(th1); //将单元格添加到行内
+                        }
+                        document.getElementById("table_head").append(row); //将参数名称添加到<thread>中
+
+                        for (var i = 0; i < (len-1)/3; i++) {
+                            row = document.createElement("tr"); //创建行
+                            for (var j = i; j < len-1; j += (len-1)/3) {
+                                td1 = document.createElement("td"); //创建单元格
+                                td1.appendChild(document.createTextNode(col_count[j])); //为单元格添加内容
+                                row.appendChild(td1); //将单元格添加到行内
+                            }
+                            document.getElementById("table_body").append(row); //将行添加到<thread>中
+                        }
+                    }
+                    $.Huimodalalert('计算完成', 1000);
+                    document.getElementById("detail_text").innerText="";
+                    document.getElementById("detail_text").innerText="结果描述：故障树分析是通过故障演绎分析方法，评价复杂系统的可靠性的重要方法。该部分通过对数字化低压铸造装备底事件的确定、故障树的建立、所有底事件失效概率的确定，模型计算区域所显示的是底事件发生概率，底事件概率重要度，底事件关键重要度，分析出无模砂型加工中心可靠度R";
+                },
+                error: function () {
+                    $.Huimodalalert('任务运行失败', 1000);
+                }
+            });
+        }
+    }
+</script>
+<style>
+    table tbody {
+        display:block;
+        height:95%;
+        overflow-y:scroll;
+    }
+
+    table thead, tbody tr {
+        display:table;
+        width:100%;
+        table-layout:fixed;
+    }
+
+    table thead {
+        width: calc( 100% - 1em )
+    }
+    table thead th{ background:#ccc;}
+</style>
+</body>
+</html>

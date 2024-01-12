@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>模型库管理</title>
+   <!-- <link rel="stylesheet" href="css/threeTwo.css" type="text/css"/>-->
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui/css/H-ui.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/H-ui.admin.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/Hui-iconfont/1.0.8/iconfont.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/skin/default/skin.css}" id="skin" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/style.css}" />
+</head>
+<body>
+<!--<input type="hidden" th:value="${modelid}" id="modelid"/>-->
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 性能退化模型库 <span class="c-gray en">&gt;</span> 算法库  <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container" >
+    <div class="panel panel-default">
+        <div class="panel-header">算法列表
+            <a onclick="jumpDialog()"><input class="btn btn-success radius" type="button" style="position: absolute;right: 4%;;margin-top:  -0.3%;" value="新增" /></a>
+        </div>
+
+
+        <div class="panel-body">
+            <div >
+                <!--实现模糊搜索-->
+                <form method="get" action="#" th:action="@{/perform/algorithmSearch}">
+                    <input type="text" placeholder="请输入算法名" class="input-text ac_input" name="search_text" value=""
+                           id="search_text" autocomplete="off" style="width:30%">
+                    <button type="submit" class="btn btn-default" id="search_button">
+                    搜索
+                    </button>
+                   &nbsp;&nbsp;&nbsp;【当前共&nbsp;&nbsp;<a th:text="${algorithmList.size()}"></a>&nbsp;&nbsp;个算法】
+
+
+                </form>
+            </div>
+            <div style="margin-top: 1%;overflow: auto" >
+                <table class="table table-border table-bordered table-hover table-bg table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th >算法名称</th>
+                        <th >算法类别</th>
+                        <th >算法标签</th>
+                        <th >算法描述</th>
+                        <th >添加时间</th>
+                        <th >算法版本</th>
+                        <th>操作人</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr class="text-c" th:if="${algorithmList.size()} eq 0">
+                            <td colspan="8">没有相关算法</td>
+                        </tr>
+                <!--     <tr class="text-c">
+                         <td colspan="4">当前未上传数据</td>
+                     </tr>-->
+
+                        <tr class="text-c"  th:each="algorithmList:${algorithmList}">
+                            <td  th:text="${algorithmList.algorithmname}" ></td>
+                            <td  th:text="${algorithmList.algorithmtype}" ></td>
+                            <td  th:text="${algorithmList.algorithmlabel}" ></td>
+                            <td  th:text="${algorithmList.algorithmdescribe}" ></td>
+                            <td th:text="${algorithmList.algorithmtime}" ></td>
+                            <td  th:text="${algorithmList.algorithmversion}" ></td>
+                            <td th:text="${algorithmList.algorithmman}"></td>
+
+                            <td>
+
+                                <a th:href="'/perform/algorithmView/'+${algorithmList.algorithmid}">
+                                    <input th:id="${algorithmList.algorithmid}" class="btn btn-primary size-MINI radius" type="button" value="查看"  >
+                                </a>
+
+                                <a th:href="'/perform/deleteAlgorithm/'+${algorithmList.algorithmid}">
+                                    <input th:id="${algorithmList.algorithmid}" class="btn btn-primary size-MINI radius" type="button" value="删除"  >
+                                </a>
+
+
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="upfile" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <!-- 弹出对话框 -->
+        <div class="modal-dialog">
+            <div class="modal-content radius">
+                <div class="modal-header">
+                    <h3 class="modal-title">算法上传</h3>
+                    <a class="close" data-dismiss="modal" aria-hidden="true">×</a>
+                </div>
+                <div class="modal-body">
+                    <div class="upfile-group">
+                        <!--通过onsubmit 去进行提交前其他操作-->
+                        <form id="upfileForm" th:action="@{'/perform/updateAlgorithm'}" enctype="multipart/form-data" method="post"  onsubmit="return verify()">
+                            <!--<div class="fileupload">-->
+                                <!--<span id="filename" style="margin-left: 33%">点击此处选择文件</span>-->
+                                <!--<input type="file"  id="file" onchange="getFilename();" name="filename" style="opacity: 0;margin-left: -31%"/>-->
+                            <!--</div>-->
+                            <div class="modal-body">
+                                <strong style="margin-left: 5%">算法文件：</strong>
+                                <span id="filename" style="margin-left: 1%">点击此处选择文件</span>
+                                <input type="file"  id="file" onchange="getFilename();" name="filename" style="opacity: 0;margin-left: -31%"/>
+                            </div>
+
+                            <div class="modal-body">
+                                <strong style="margin-left: 5%">算法名称：</strong>
+                                <input type="text" placeholder="请输入算法名称" class="input-text radius size-S" style="margin:10px 15px 10px 15px;;width: 43%;" name="algorithmname">
+                            </div>
+
+
+                            <div class="modal-body">
+                                <strong style="margin-left: 5%">类&nbsp;&nbsp;&nbsp;&nbsp;别：</strong>
+                                <!--<input type="text" placeholder="请输入算法类别" class="input-text radius size-S" style="margin:10px 15px 10px 15px;;width: 43%;" id="algorithmtype" name="algorithmtype">-->
+                                <select class="input-text radius size-S" style="margin:10px 15px 10px 15px;;width: 43%;" name="algorithmtype">
+                                    <option style="font-size: 12px">请选择算法类别</option>
+                                    <option style="font-size: 12px" name="algorithmtype">预处理</option>
+                                    <option style="font-size: 12px" name="algorithmtype">隐马尔可夫</option>
+                                    <option style="font-size: 12px" name="algorithmtype">堆栈式编码器</option>
+                                    <option style="font-size: 12px" name="algorithmtype">退化等级分析</option>
+                                    <option style="font-size: 12px" name="algorithmtype">多状态序列分析</option>
+                                    <option style="font-size: 12px" name="algorithmtype">多态渐变分析</option>
+                                </select>
+                            </div>
+                            <div class="modal-body">
+                                <strong style="margin-left: 5%">描&nbsp;&nbsp;&nbsp;&nbsp;述</strong><input type="text" placeholder="请输入算法描述" class="input-text radius size-S" style="margin:10px 15px 10px 27px;;width: 43%;" id="algorithmdescribe" name="algorithmdescribe">
+                            </div>
+                            <div class="modal-body" ><strong style="margin-left: 5%">标&nbsp;&nbsp;&nbsp;&nbsp;签：</strong>
+                                <!--<input type="text" placeholder="请输入对象属性" class="input-text radius size-S" style="margin:10px 15px 10px 15px;;width: 43%;" id="objectattribute">-->
+                                <select class="input-text radius size-S" style="margin:10px 15px 10px 15px;;width: 43%;" name="algorithmlabel">
+                                    <option style="font-size: 12px">请选择算法类型</option>
+                                    <option style="font-size: 12px" name="algorithmlabel">行业专用</option>
+                                </select>
+                            </div>
+                            <div class="modal-body" ><strong style="margin-left: 5%">版&nbsp;&nbsp;&nbsp;&nbsp;本：</strong>
+                                <!--<input type="text" placeholder="请输入对象属性" class="input-text radius size-S" style="margin:10px 15px 10px 15px;;width: 43%;" id="objectattribute">-->
+                                <select class="input-text radius size-S" style="margin:10px 15px 10px 15px;;width: 43%;" name="algorithmversion">
+                                    <option style="font-size: 12px">请选择算法版本</option>
+                                    <option style="font-size: 12px" name="algorithmversion">spark</option>
+                                    <option style="font-size: 12px" name="algorithmversion">python</option>
+                                </select>
+                            </div>
+
+<!--                            <div class="modal-body">-->
+<!--                                <strong style="margin-left: 5%">数据源参数：</strong>-->
+<!--                                <input type="text" placeholder="请输入数据源参数,以分号进行隔开" class="input-text radius size-S" style="margin:10px 15px 10px 15px;;width: 43%;" name="algorithmparamsinput">-->
+<!--                            </div>-->
+<!--                            <div class="modal-body">-->
+<!--                                <strong style="margin-left: 5%">算法参数：</strong>-->
+<!--                                <input type="text" placeholder="请输入算法参数,以分号进行隔开" class="input-text radius size-S" style="margin:10px 15px 10px 15px;;width: 43%;" name="algorithmparamscontent">-->
+<!--                            </div>-->
+<!--                            <div class="modal-body">-->
+<!--                                <strong style="margin-left: 5%">输出参数：</strong>-->
+<!--                                <input type="text" placeholder="请输出参数,以分号进行隔开" class="input-text radius size-S" style="margin:10px 15px 10px 15px;;width: 43%;" name="algorithmparamsoutput">-->
+<!--                            </div>-->
+
+                            <div class="modal-body">
+                                <strong style="margin-left: 5%;position: absolute ">算法说明：</strong>
+                                <textarea name="textarea" id="textarea" style="resize:none;border: 1px solid #DDDDDD;margin-left: 20%;width: 46%;height: 7vh;"></textarea>
+                                <input type="text" placeholder="请输出算法描述" class="input-text radius size-S" style="margin:10px 15px 10px 15px;;width: 43%;display: none" name="algorithmmiaoshu"  id="algorithmmiaoshu">
+                            </div>
+
+
+                            <div class="button_position">
+                                <!--<button class="btn btn-primary" data-dismiss="modal" onclick="object();">确定</button>-->
+                                <input type="submit" class="btn btn-primary radius" value="提交" style="margin-left: 80%; margin-top: 0%;">
+                                <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+                            </div>
+
+                        </form><br/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript" th:src="@{/lib/jquery/1.9.1/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{/lib/layer/2.4/layer.js}"></script>
+<script type="text/javascript" th:src="@{/h-ui/js/H-ui.min.js}"></script>
+<script type="text/javascript" th:src="@{/h-ui.admin/js/H-ui.admin.js}"></script>
+<!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" th:src="@{lib/My97DatePicker/4.8/WdatePicker.js}"></script>
+<script type="text/javascript" th:src="@{lib/datatables/1.10.0/jquery.dataTables.min.js}"></script>
+<script type="text/javascript" th:src="@{lib/laypage/1.2/laypage.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+    window.onload=function() {
+        var oLis = document.getElementsByTagName("input");
+        for (var index = 0; index < oLis.length; index++) {
+            oLis[index].onclick = function () {
+                var algorithmid = this.id;
+                var value = this.value;
+                // if (value == "删除") {
+                //     if (confirm("确定要删除此算法？")) {
+                //         var algorithmid = {
+                //             "algorithmid": algorithmid
+                //         };
+                //         $.ajax({
+                //             async: false,
+                //             type: "post",
+                //             dataType: "json",
+                //             contentType: 'application/json;charset=UTF-8',
+                //             data: JSON.stringify(algorithmid),
+                //             url: '/algorithm/deleteAlgorithm',
+                //             success: function () {
+                //                 $.Huimodalalert('删除成功', 1000);
+                //                 location.reload(true);
+                //             }
+                //         });
+                //         location.reload(true);
+                //     }
+                //     else {
+                //     }
+                // }
+
+            }
+        }
+    }
+    function getFilename(){
+        var filename=document.getElementById("file").value;
+        if(/.*[\u4e00-\u9fa5]+.*$/.test(filename)){
+            $.Huimodalalert('请确认文件名称为英文', 2000);
+            document.getElementById("file").value = null;
+        }
+        else {
+            if (filename == undefined || filename == "") {
+                document.getElementById("filename").innerHTML = "点击此处上传文件";
+            } else {
+                var fn = filename.substring(filename.lastIndexOf("\\") + 1);
+                document.getElementById("filename").innerHTML = fn; //将截取后的文件名填充到span中
+            }
+        }
+    }
+
+    //跳出模型保存框
+    function jumpDialog() {
+        $("#upfile").modal("show");
+    }
+
+    //关闭模型保存框
+    function hideDialog() {
+        setTimeout($("#upfile").modal("hide"),"3000");
+    }
+    function verify() {
+
+// jquery .ajaxSubmit表单提交，页面不刷新
+        $("#upfileForm").ajaxSubmit(function(data) {
+// 对于表单提交成功后处理，message为提交页面saveReport.htm的返回内容
+            if (data.code == 0) {
+                $.Huimodalalert('上传成功', 2000);
+                //关闭弹框
+                hideDialog();
+                //延时后页面跳转
+                // var  businessid = document.getElementById('businessid').getAttribute('value');
+                window.setTimeout("window.location.reload(true)", 1000);
+                // window.setTimeout("window.location.href=",1000);
+            }
+            else {
+                $.Huimodalalert('已存在算法名，请重新上传', 2000);
+            }
+        });
+        return false; // 必须返回false，否则表单会自己再做一次提交操作，并且页面跳转
+    }
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#textarea").blur(function(){
+            var text =$("#textarea").val();
+            var des = text.replace(/\r\n/g, '<br/>').replace(/\n/g, '<br/>').replace(/\s/g, '&nbsp;');
+            $("#algorithmmiaoshu").attr("value",des);
+            // var name = $("#algorithmmiaoshu").val();
+        });
+    });
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" xmlns:c="http://www.w3.org/1999/XSL/Transform">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+
+    <title>可靠性模块</title>
+    <!--<link rel="stylesheet" th:href="@{/css/system_ reliability.css}" type="text/css"/>-->
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui/css/H-ui.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/H-ui.admin.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/Hui-iconfont/1.0.8/iconfont.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/skin/default/skin.css}" id="skin" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/style.css}" />
+    <script type="text/javascript" th:src="@{/lib/jquery.js}" ></script>
+    <script type="text/javascript" th:src="@{/lib/echarts/echarts.min.js}"></script>
+    <!--_footer 作为公共模版分离出去-->
+    <script type="text/javascript" th:src="@{/lib/jquery/1.9.1/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/lib/layer/2.4/layer.js}"></script>
+    <script type="text/javascript" th:src="@{/h-ui/js/H-ui.min.js}"></script>
+    <script type="text/javascript" th:src="@{/h-ui.admin/js/H-ui.admin.js}"></script>
+    <!--/_footer 作为公共模版分离出去-->
+
+    <!--请在下方写此页面业务相关的脚本-->
+    <script type="text/javascript" th:src="@{lib/My97DatePicker/4.8/WdatePicker.js}"></script>
+    <script type="text/javascript" th:src="@{lib/datatables/1.10.0/jquery.dataTables.min.js}"></script>
+    <script type="text/javascript" th:src="@{lib/laypage/1.2/laypage.js}"></script>
+
+</head>
+
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i>堆栈式自编码性能退化分析可视化<span class="c-gray en">&gt;</span>数字化真空差压铸造装备可视化<span class="c-gray en"></span>  <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<body class="page-container" style="position: absolute;width: 97%;height: 90%;">
+<!--卡片式布局，外侧div引入class="page-container"以及上方5个公共div--模型计算区域-->
+<div class="panel panel-default" style="width: 100%;height: 55vh;float: left;margin-left: 0%;overflow-x:hidden;overflow-y:auto">  <!--id="panel"-->
+    <div class="panel-header">可视化展示 <!--onclick="jumpDialog()"--></div>
+    <div class="panel-body" id="model_content"></div>
+
+    <!--绘图区域-->
+    <div style="width: 99.7%;height: 49vh;margin-top: -30px" id="panel">
+
+    </div>
+</div>
+
+<!--模型说明及日志区域-->
+<div class="panel panel-default" style="width: 100%;height: 31vh;float: left;margin-left: 0%;margin-top: 2%;">
+    <div class="panel-header">可视化说明</div>
+    <div class="panel-body" id="detail_text" style="font-size: 22px;float: left; width: 97%;height: 73%;overflow-x:hidden;overflow-y:auto;">
+        利用机械频域信号来训练SAE网络，实现机械装备性能退化特征的自适应提取；根据机械装备性能退化的特点，引入相关性和单调性对特征进行评价；基于状态特征空间距离计算可靠性，实现机械装备服役可靠性的评估
+    </div>
+</div>
+
+<script type="text/javascript" th:src="@{/echarts.js}"></script>
+<script type="text/javascript">
+    var result = [[${result}]];
+
+    console.log(result)
+
+    var len=result.length;
+    //
+    var array=new Array();
+    for (var i=0;i<len;i++){
+        array[i]=i;
+    }
+
+
+
+    // 基于准备好的dom，初始化echarts实例
+    var myChart =echarts.init(document.getElementById('panel'));
+    // 指定图表的配置项和数据
+    var option = {
+        // tooltip: {
+        //     trigger: 'axis'
+        // },
+        toolbox: {
+            feature: {
+                saveAsImage: {}
+            }
+        },
+        xAxis: {
+            type: 'category',
+            data: array,
+            name: '时刻'
+
+        },
+        yAxis: {
+            type: 'value'
+        },
+
+        series: [{
+            data: result,
+            type: 'line',
+            symbol: 'none',
+            smooth: true
+        }]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+</script>
+
+
+</body>
+</body>
+</html>

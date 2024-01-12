@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" xmlns:c="http://www.w3.org/1999/XSL/Transform">
+<head>
+    <meta http-equiv="Content-Type" content="multipart/form-data; charset=utf-8" />
+    <title>性能参数采集与预处理</title>
+    <link rel="stylesheet" th:href="@{/css/upFile.css}"type="text/css"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui/css/H-ui.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/H-ui.admin.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/Hui-iconfont/1.0.8/iconfont.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/skin/default/skin.css}" id="skin" />
+    <link rel="stylesheet" type="text/css" th:href="@{/h-ui.admin/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css"/>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 性能参数采集与预处理 <span class="c-gray en">&gt;</span> 性能参数采集 <span class="c-gray en"></span><a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+    <div class="panel panel-default" style="height: 90vh;">
+        <div class="panel-header">文件上传</div>
+        <div class="panel-body">
+            <!--上传按钮区域-->
+            <div class="logo_area">
+                <div class="logo_content">
+                    <img class="logo_image" th:src="@{/image/Excel.bmp}"/>
+                    <p class="logo_text" ><strong>Excel</strong></p>
+                </div>
+                <div class="logo_content">
+                    <img class="logo_image" th:src="@{/image/Oracle.bmp}"/>
+                    <p class="logo_text" ><strong>Oracle</strong></p>
+                </div>
+                <div class="logo_content">
+                    <img class="logo_image" th:src="@{/image/Hive.bmp}"/>
+                    <p class="logo_text" ><strong>Hive</strong></p>
+                </div>
+                <div class="logo_content">
+                    <img class="logo_image" th:src="@{/image/MySol.bmp}"/>
+                    <p class="logo_text" ><strong>MySqL</strong></p>
+                </div>
+                <div class="logo_content">
+                    <img class="logo_image" th:src="@{/image/kafka1.bmp}"/>
+                    <p class="logo_text" ><strong>kafka</strong></p>
+                </div>
+            </div>
+            <!--上传表单区域-->
+            <div class="upfile-group">
+                <!--通过onsubmit 去进行提交前其他操作-->
+                <form id="upfileForm" action="#" th:action="@{/perform/saveFile}" enctype="multipart/form-data" method="post"  onsubmit="return verify()">
+             <!--   <form id="upfileForm" enctype="multipart/form-data" onsubmit="return verify()" >-->
+                    <div class="fileupload">
+                        <span id="filename">点击此处选择文件</span>
+                        <input type="file"  id="file" onchange="getFilename();" name="filename"/>
+                    </div>
+                <p><strong>选择数据作用区：</strong></p>
+                    <div class="select-box" style="width: 80%">
+                        <select id="fileKind" class="select" size="1"  name="fileKind">
+                            <option value="选择数据作用区" selected>选择数据作用区</option>
+                            <option value="隐马尔可夫">隐马尔可夫</option>
+                            <option value="堆栈式编码">堆栈式编码</option>
+                            <option value="退化等级分析">退化等级分析</option>
+                            <option value="退化等级分析">多状态序列分析</option>
+                            <option value="退化等级分析">多态渐变分析</option>
+                        </select>
+                    </div>
+                    <p><strong>数据分组：</strong></p>
+                    <div class="select-box" style="width: 80%">
+                        <select id="fileGroup" class="select" size="1"  name="fileGroup">
+                            <option value="选择数据分组" selected>选择数据分组</option>
+                            <option value="无模砂型加工中心">无模砂型加工中心</option>
+                            <option value="数字化低压铸造装备">数字化低压铸造装备</option>
+                            <option value="数字化真空差压装备">数字化真空差压装备</option>
+                        </select>
+                    </div>
+                    <div class="button_position">
+                        <input type="submit" class="btn btn-primary radius" value="提交">
+                    </div>
+                </form>
+                <br/>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-demo" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <!-- 弹出对话框 -->
+        <div class="modal-dialog">
+            <div class="modal-content radius">
+                <div class="modal-header">
+                    <h3 class="modal-title">数据转换</h3>
+                    <a class="close" data-dismiss="modal" aria-hidden="true">×</a>
+                </div>
+                <div class="progress" style="width: 100%">
+                    <div class="progress-bar">
+                        <span class="sr-only" style="width:0%" id="probar"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript" th:src="@{/lib/jquery/1.9.1/jquery.js}"></script>
+<script type="text/javascript" th:src="@{/lib/layer/2.4/layer.js}"></script>
+<script type="text/javascript" th:src="@{/h-ui/js/H-ui.js}"></script>
+<script type="text/javascript" th:src="@{/h-ui.admin/js/H-ui.admin.js}"></script>
+</body>
+
+<script>
+
+    //获取文件名，显示在上传文本框
+    function getFilename(){
+        var filename=document.getElementById("file").value;
+        if(filename==undefined||filename==""){
+            document.getElementById("filename").innerHTML="点击此处上传文件";
+        } else{
+            var fn=filename.substring(filename.lastIndexOf("\\")+1);
+            document.getElementById("filename").innerHTML=fn; //将截取后的文件名填充到span中
+        }
+    }
+
+    //跳出模型保存框
+    function jumpDialog() {
+        $("#modal-demo").modal("show");
+    }
+
+    //关闭模型保存框
+    function hideDialog() {
+        setTimeout($("#modal-demo").modal("hide"),"3000");
+    }
+
+
+
+
+    //form表单提交前进行判断，return false意味着不再跳转
+    function verify() {
+        var file_str = $("#file").val();
+
+        var file_arr = file_str.split('.');
+        var file = "."+file_arr[file_arr.length-1];
+        var fileKind = $("#fileKind").val();
+        if (file =="."|| file==null) {
+            $.Huimodalalert('请选择要上传的数据文件',1000);
+            return false;
+        }
+        // if(file != ".csv"&&file != ".xls" &&file != ".txt"&&file != ".png"&&file != ".pdf"){
+        //     $.Huimodalalert('该文件类型不支持上传',1000);
+        //     return false;
+        // }
+
+        // if(file != fileKind){
+        //     $.Huimodalalert('文件上传类型与目标格式不一致，即将进行数据转换并上传',1000);
+        //     jumpDialog();
+        //     processerbar(3000);
+        //     setTimeout(" saveReport()","3500");
+        // }
+
+            $.Huimodalalert('正在上传',1000);
+            //执行提交
+            setTimeout(" saveReport()","3500");
+
+        return false;
+    }
+
+    //https://www.jb51.net/article/140233.htm   ajaxSubmit提交方法详解
+ /*   function saveReport1(){
+        $(function () {
+     /!*       alert("ok");*!/
+            var options={
+                type: 'POST',
+                url: '/saveFileWen',
+                success: showResponse,
+            };
+            $("#upfileForm").submit(function () {
+                $(this).ajaxSubmit(options);
+                return false
+            });
+        });
+        function showResponse(responseText) {
+            if (responseText.code==1) {
+                alert("数据上传成功")
+            }else {
+                alert("该数据已经上传过")
+            }
+        }
+       return false;
+    }*/
+
+
+
+
+     function saveReport() {    /*th:action="@{/saveFile}"  method="post"*/
+
+            $("#upfileForm").ajaxSubmit(function(message) {    // jquery .ajaxSubmit表单提交，页面不刷新
+                $.Huimodalalert('上传成功',2000);   // 对于表单提交成功后处理，message为提交页面saveReport.htm的返回内容
+                hideDialog(); //关闭弹框
+                window.setTimeout("window.location = '/perform/dataManageper'",1000);  //延时后页面跳转
+            });
+            return false; // 必须返回false，否则表单会自己再做一次提交操作，并且页面跳转
+        }
+
+
+   /* function saveReport() {
+// jquery .ajaxSubmit表单提交，页面不刷新
+        $("#upfileForm").ajaxSubmit(function(message) {
+// 对于表单提交成功后处理，message为提交页面saveReport.htm的返回内容
+            $.Huimodalalert('上传成功',2000);
+            //关闭弹框
+            hideDialog();
+            //延时后页面跳转
+            window.setTimeout("window.location = '/dataManage'",1000);
+        });
+        return false; // 必须返回false，否则表单会自己再做一次提交操作，并且页面跳转
+    }*/
+
+    //进度条，animate函数，进度条动画
+    function processerbar(time){
+        $("#probar").animate({width:"100%"},time,"swing");
+
+    };
+
+</script>
+</html>
